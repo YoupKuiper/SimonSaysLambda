@@ -3,7 +3,7 @@ import boto3
 client = boto3.client('dynamodb', region_name='us-east-1')
 
 def handleRequest(event, context):
-    echo "aangepast"
+    echo "aangepast!"
     intent_name = intent_request['currentIntent']['name']
     if intent_name == 'createTable':
         return createTable(event, context)
