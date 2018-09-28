@@ -1,21 +1,14 @@
 {
  	"version": 0.0,
  	"Resources": [{
- 		"myLambdaFunction": {
+ 		"miraBotDatabaseFunction": {
  			"Type": "AWS::Lambda::Function",
  			"Properties": {
  				"Name": "miraBotDatabaseFunction",
- 				"Alias": "miraBotDatabaseFunction",
+ 				"Alias": "miraBotDataBase",
  				"CurrentVersion": "1",
- 				"TargetVersion": "2"
+ 				"TargetVersion": "1"
  			}
  		}
- 	}],
- 	"Hooks": [{
- 			"BeforeAllowTraffic": "LambdaFunctionToValidateBeforeTrafficShift"
-      },
-      {
- 			"AfterAllowTraffic": "LambdaFunctionToValidateAfterTrafficShift"
- 		}
- 	]
+ 	}]
  }
