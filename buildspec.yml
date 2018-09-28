@@ -10,4 +10,4 @@ phases:
       - echo Build completed on `date`
 artifacts:
   files:
-    - dynamodb_lambda.py
+    - SimonSaysBuild
