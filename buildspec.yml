@@ -11,3 +11,4 @@ phases:
 artifacts:
   files:
     - database_lambda.py
+    - AppSpec.json
