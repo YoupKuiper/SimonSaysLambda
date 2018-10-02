@@ -1,6 +1,8 @@
+#!/Users/ykuiper/SimonSaysLambdaRepo/env/bin/python3.7
 import json
 from troposphere import Ref, Template
 import troposphere.ec2 as ec2
+
 
 def lambda_handler(event, context):
     print(event)
