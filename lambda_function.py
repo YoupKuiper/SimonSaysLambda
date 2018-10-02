@@ -1,8 +1,5 @@
 #!/Users/ykuiper/SimonSaysLambdaRepo/env/bin/python3.7
 import json
-from troposphere import Ref, Template
-import troposphere.ec2 as ec2
-
 
 def lambda_handler(event, context):
     print(event)
@@ -68,7 +65,6 @@ def addDefaultVPC(event):
     projectName = event['sessionAttributes']['projectName']
     message = f"The default VPC has been added to project {projectName}."
     sessionAttributesToAppend = {"VPC": "default"}
-    buildCloudFormationTemplate()
     return buildLexResponse(1, message, sessionAttributesToAppend, event)
 
 
@@ -79,13 +75,3 @@ def addDatabase(event):
 def appendSessionAttributes(attributes, attributesToAppend):
     attributes.update(attributesToAppend)
     return attributes
-
-
-def buildCloudFormationTemplate():
-    t = Template()
-    instance = ec2.Instance("myinstance")
-    instance.ImageId = "ami-951945d0"
-    instance.InstanceType = "t1.micro"
-    t.add_resource(instance)
-    print(t.to_json())
-
