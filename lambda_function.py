@@ -78,7 +78,7 @@ def addDefaultVPC(event):
 
 
 def addDatabase(event):
-    print("asd")
+    print("asdfgh")
 
 
 def appendSessionAttributes(attributes, attributesToAppend):
@@ -98,4 +98,3 @@ def createStackFromTemplateBody(stackName, templateBody):
         TemplateBody=templateBody.printJSON())
 
     print(response)
-    
