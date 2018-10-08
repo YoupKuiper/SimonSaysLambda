@@ -1,5 +1,6 @@
 #!/Users/ykuiper/SimonSaysLambdaRepo/env/bin/python3.7
-import json
+import boto3
+client = boto3.client('cloudformation')
 
 def lambda_handler(event, context):
     print(event)
@@ -75,3 +76,50 @@ def addDatabase(event):
 def appendSessionAttributes(attributes, attributesToAppend):
     attributes.update(attributesToAppend)
     return attributes
+
+def createStack(stackName, templateBody, templateURL):
+    response = client.create_stack(
+    StackName=stackName,
+    TemplateBody=templateBody,
+    TemplateURL=templateURL,
+    Parameters=[
+        {
+            'ParameterKey': 'string',
+            'ParameterValue': 'string',
+            'UsePreviousValue': True|False,
+            'ResolvedValue': 'string'
+        },
+    ],
+    DisableRollback=True|False,
+    RollbackConfiguration={
+        'RollbackTriggers': [
+            {
+                'Arn': 'string',
+                'Type': 'string'
+            },
+        ],
+        'MonitoringTimeInMinutes': 123
+    },
+    TimeoutInMinutes=123,
+    NotificationARNs=[
+        'string',
+    ],
+    Capabilities=[
+        'CAPABILITY_IAM'|'CAPABILITY_NAMED_IAM',
+    ],
+    ResourceTypes=[
+        'string',
+    ],
+    RoleARN='string',
+    OnFailure='DO_NOTHING'|'ROLLBACK'|'DELETE',
+    StackPolicyBody='string',
+    StackPolicyURL='string',
+    Tags=[
+        {
+            'Key': 'string',
+            'Value': 'string'
+        },
+    ],
+    ClientRequestToken='string',
+    EnableTerminationProtection=True|False
+)
