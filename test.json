@@ -1,12 +1,3 @@
 {
-  "dialogState": "ElicitIntent",
-  "intentName": "AddDefaultVPC",
-  "message": "Project x has been created, would you like a custom or a default VPC?",
-  "messageFormat": "PlainText",
-  "responseCard": null,
-  "sessionAttributes": {
-    "projectName": "x"
-  },
-  "slotToElicit": null,
-  "slots": null
+  "print": "Youp is een baas!"
 }

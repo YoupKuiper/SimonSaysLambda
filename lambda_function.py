@@ -5,18 +5,19 @@ from Template import Template
 client = boto3.client('cloudformation')
 
 def lambda_handler(event, context):
-    print(event)
-    currentIntent = event['currentIntent']['name']
-    if currentIntent == "CreateProject":
-        return createProject(event)
-    elif currentIntent == "AddDatabase":
-        return addDatabase(event)
-    elif currentIntent == "AddDefaultVPC":
-        return addDefaultVPC(event)
-    elif currentIntent == "AddCustomVPC":
-        return addCustomVPC(event)
-    else:
-        return buildLexResponse(0, "Error, unrecognized intent", None, None)
+    return event['print']
+    # print(event)
+    # currentIntent = event['currentIntent']['name']
+    # if currentIntent == "CreateProject":
+    #     return createProject(event)
+    # elif currentIntent == "AddDatabase":
+    #     return addDatabase(event)
+    # elif currentIntent == "AddDefaultVPC":
+    #     return addDefaultVPC(event)
+    # elif currentIntent == "AddCustomVPC":
+    #     return addCustomVPC(event)
+    # else:
+    #     return buildLexResponse(0, "Error, unrecognized intent", None, None)
 
 
 def buildLexResponse(isRecognizedIntent, message, sessionAttributesToAppend, event):
