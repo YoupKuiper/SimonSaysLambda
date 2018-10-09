@@ -1,5 +1,8 @@
 #!/Users/ykuiper/SimonSaysLambdaRepo/env/bin/python3.7
-import json
+import boto3
+from Template import Template
+
+client = boto3.client('cloudformation')
 
 def lambda_handler(event, context):
     print(event)
@@ -55,7 +58,11 @@ def addCustomVPC(event):
         "amountOfPrivateSubnets": amountOfPrivateSubnets
     }
     projectName = event['sessionAttributes']['projectName']
-
+    template = Template()
+    template.addVPC()
+    template.addSubnet(int(amountOfPrivateSubnets) + int(amountOfPublicSubnets), "VPC")
+    print(str(template.printJSON()))
+    createStackFromTemplateBody(projectName, template)
     message = f"A custom VPC with {amountOfPublicSubnets} public subnets and {amountOfPrivateSubnets} private subnets has been added to project {projectName}"
 
     return buildLexResponse(1, message, sessionAttributesToAppend, event)
@@ -65,13 +72,29 @@ def addDefaultVPC(event):
     projectName = event['sessionAttributes']['projectName']
     message = f"The default VPC has been added to project {projectName}."
     sessionAttributesToAppend = {"VPC": "default"}
+    templateURL = "https://s3-eu-west-1.amazonaws.com/demobucketsimonsays/demoTemplate.json"
+    createStackFromURL(projectName, templateURL)
     return buildLexResponse(1, message, sessionAttributesToAppend, event)
 
 
 def addDatabase(event):
-    print("asd")
+    print("Codepipeline Works!")
 
 
 def appendSessionAttributes(attributes, attributesToAppend):
     attributes.update(attributesToAppend)
     return attributes
+
+def createStackFromURL(stackName, templateURL):
+    response = client.create_stack(
+        StackName=stackName,
+        TemplateURL=templateURL)
+
+    print(response)
+
+def createStackFromTemplateBody(stackName, templateBody):
+    response = client.create_stack(
+        StackName=stackName,
+        TemplateBody=templateBody.printJSON())
+
+    print(response)
