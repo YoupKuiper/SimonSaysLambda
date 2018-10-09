@@ -5,6 +5,7 @@ from Template import Template
 client = boto3.client('cloudformation')
 
 def lambda_handler(event, context):
+    print("asd")
     return event['print']
     # print(event)
     # currentIntent = event['currentIntent']['name']
