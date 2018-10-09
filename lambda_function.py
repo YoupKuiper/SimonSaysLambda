@@ -78,7 +78,7 @@ def addDefaultVPC(event):
 
 
 def addDatabase(event):
-    print("asdfgh")
+    print("Codepipeline Works!")
 
 
 def appendSessionAttributes(attributes, attributesToAppend):
