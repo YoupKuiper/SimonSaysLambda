@@ -1,6 +1,5 @@
-#!/Users/ykuiper/SimonSaysLambdaRepo/env/bin/python3.7
 import boto3
-from Template import Template
+import TemplateBuilder
 
 client = boto3.client('cloudformation')
 
