@@ -2,7 +2,6 @@ import boto3
 from TemplateBuilder import TemplateBuilder
 
 client = boto3.client('cloudformation')
-t = TemplateBuilder()
 
 
 def lambda_handler(event, context):
@@ -48,12 +47,14 @@ def createProject(event):
 
 
 def buildTemplate(event):
+    t = TemplateBuilder()
     projectName = event['sessionAttributes']['projectName']
     for resourceSlot in event['currentIntent']['slots']:
         resource = event['currentIntent']['slots'][resourceSlot]
         t.addResource(resource)
-    createStackFromTemplateBody(projectName, t)
+    createStackFromTemplateBody(projectName, t.getTemplate())
     message = f"The resources were added to project {projectName}."
+    sessionAttributesToAppend = {}
     return buildLexResponse(1, message, sessionAttributesToAppend, event)
 
 
@@ -73,7 +74,7 @@ def createStackFromURL(stackName, templateURL):
 def createStackFromTemplateBody(stackName, templateBody):
     response = client.create_stack(
         StackName=stackName,
-        TemplateBody=templateBody.printJSON())
+        TemplateBody=str(templateBody))
 
     print(response)
 

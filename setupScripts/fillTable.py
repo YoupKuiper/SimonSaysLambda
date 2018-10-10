@@ -69,5 +69,3 @@ dicts = [dictTemp, dictTemp2, dictTemp3]
 table.put_item(Item={"Type": "temp", "json": dictTemp})
 table.put_item(Item={"Type": "temp2", "json": dictTemp2})
 table.put_item(Item={"Type": "temp3", "json": dictTemp3})
-
-print(json.dumps(dictTemp, sort_keys=True, indent=4, separators=(',', ': ')))
