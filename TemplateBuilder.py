@@ -2,7 +2,7 @@ import json
 import decimal
 from dbhandler import dbhandler
 
-# using local debug db. Use getDB for online deveopmentDB
+# using local debug db. Use getDB for online developmentDB
 table = dbhandler.getDebugDB()
 
 
