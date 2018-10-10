@@ -1,18 +1,13 @@
 import json
-import boto3
 import decimal
+import dbhandler
 
-DB_NAME = 'SimonSaysCFNTemplates'
-
-dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
-
-# TODO Change table hardcoded to environmentvar
-table = dynamodb.Table(DB_NAME)
-
-# Class for generating templates with cloudformation resources
+# using local debug db. Use getDB for online deveopmentDB
+table = dbhandler.getDebugDB()
 
 
 class TemplateBuilder:
+    # Class for generating templates with cloudformation resources
 
         # Create tempBase for resources
     def __init__(self):
@@ -25,12 +20,12 @@ class TemplateBuilder:
 
         # Print json for debug
     def printJSON(self):
-        resources = {"Resources": self.__tempBase}
-        return json.dumps(resources, cls=DecimalEncoder)
+        return json.dumps(self.__tempBase, cls=DecimalEncoder)
 
 
 class DecimalEncoder(json.JSONEncoder):
     # Class to fix the boto3 to JSON problem
+    # Converts decimal dynamodb val to int
     def default(self, o):
         if isinstance(o, decimal.Decimal):
             if o % 1 > 0:
