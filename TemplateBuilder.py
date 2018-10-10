@@ -1,6 +1,6 @@
 import json
 import decimal
-import dbhandler
+from dbhandler import dbhandler
 
 # using local debug db. Use getDB for online deveopmentDB
 table = dbhandler.getDebugDB()
@@ -16,11 +16,16 @@ class TemplateBuilder:
         # Get resources from the database and add to the base
     def addResource(self, type):
         resource = table.get_item(Key={'Type': type})
-        self.__tempBase['Resources'].update(resource)
+        item = resource["Item"]["json"]
+        self.__tempBase['Resources'].update(item)
 
         # Print json for debug
     def printJSON(self):
-        return json.dumps(self.__tempBase, cls=DecimalEncoder)
+        print(json.dumps(self.__tempBase, separators=(',',':'),
+                            indent=4, cls=DecimalEncoder))
+
+    def getTemplate(self):
+        return self.__tempBase
 
 
 class DecimalEncoder(json.JSONEncoder):
