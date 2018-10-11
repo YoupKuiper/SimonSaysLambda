@@ -24,5 +24,3 @@ class dbhandler:
             table = dynamodb.Table(DB_NAME)
             print("[Attached prod database]")
             return table
-
-dbhandler.getDB()
