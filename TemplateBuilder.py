@@ -5,6 +5,7 @@ from dbhandler import dbhandler
 # using local debug db. Use getDB for online developmentDB
 table = dbhandler.getDB()
 
+
 class TemplateBuilder:
     # Class for generating templates with cloudformation resources
 
@@ -16,14 +17,12 @@ class TemplateBuilder:
     def addResource(self, type):
         resource = table.get_item(Key={'Type': type})
         item = resource["Item"]["json"]
-        print(json.dumps(item, separators=(',',':'),
-                            indent=4, cls=DecimalEncoder))
+        item = json.dumps(item, separators=(',',':'), indent=4, cls=DecimalEncoder)
         self.__tempBase['Resources'].update(item)
 
         # Print json for debug
     def printJSON(self):
-        print(json.dumps(self.__tempBase, separators=(',',':'),
-                            indent=4, cls=DecimalEncoder))
+        print(json.dumps(self.__tempBase, separators=(',',':'), indent=4, cls=DecimalEncoder))
 
     def getTemplate(self):
         return self.__tempBase
