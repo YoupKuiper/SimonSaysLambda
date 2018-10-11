@@ -1,6 +1,6 @@
-from context import dbhandler
-from TemplateBuilder import TemplateBuilder
-from lambda_function import buildTemplate
+from context import TemplateBuilder
+from context import buildTemplate
+
 
 class test:
 
@@ -14,19 +14,4 @@ class test:
     def test_lambda_function(json):
             buildTemplate(json)
 
-#test.testTemplateBuilder()
-
-
-json = {
-	"sessionAttributes": {
-		"projectName": "testStack2"
-	},
-	"currentIntent": {
-		"slots": {
-			"resourceOne": "temp",
-			"resourceTwo": "temp2"
-		}
-	}
-}
-
-test.test_lambda_function(json)
+test.testTemplateBuilder()

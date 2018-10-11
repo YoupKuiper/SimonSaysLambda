@@ -7,3 +7,5 @@ Use context to setup env for tests
 '''
 
 from dbhandler import dbhandler
+from TemplateBuilder import TemplateBuilder
+from lambda_function import buildTemplate

@@ -16,6 +16,8 @@ class TemplateBuilder:
     def addResource(self, type):
         resource = table.get_item(Key={'Type': type})
         item = resource["Item"]["json"]
+        print(json.dumps(item, separators=(',',':'),
+                            indent=4, cls=DecimalEncoder))
         self.__tempBase['Resources'].update(item)
 
         # Print json for debug
