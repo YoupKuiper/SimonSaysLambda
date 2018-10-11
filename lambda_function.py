@@ -52,9 +52,9 @@ def buildTemplate(event):
     for resourceSlot in event['currentIntent']['slots']:
         resource = event['currentIntent']['slots'][resourceSlot]
         t.addResource(resource)
-        strtest = strtest + ", " + resourceSlot
+        strtest = strtest + " " + resource
     createStackFromTemplateBody(projectName, t.getTemplate())
-    message = f"The resources: {strtest} were added to project {projectName}."
+    message = f"The resources:{strtest} were added to project {projectName}."
     sessionAttributesToAppend = {}
     return buildLexResponse(1, message, sessionAttributesToAppend, event)
 
