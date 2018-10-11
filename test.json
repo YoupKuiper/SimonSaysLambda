@@ -1,8 +1,38 @@
 {
-    "VPC": {
-        "Properties": {
-            "CidrBlock": "10.0.0.0/16"
-        },
-        "Type": "AWS::EC2::VPC"
-    }
+	"messageVersion": "1.0",
+	"invocationSource": "FulfillmentCodeHook",
+	"userId": "wo3qtgw8tgwvf16zk0r2mjun6ab024l4",
+	"sessionAttributes": {
+		"projectName": "a"
+	},
+	"requestAttributes": "None",
+	"bot": {
+		"name": "SimonSays",
+		"alias": "$LATEST",
+		"version": "$LATEST"
+	},
+	"outputDialogMode": "Text",
+	"currentIntent": {
+		"name": "AddResources",
+		"slots": {
+			"ResourceTwo": "temp2",
+			"ResourceOne": "temp"
+		},
+		"slotDetails": {
+			"ResourceTwo": {
+				"resolutions": [{
+					"value": "dynamodb"
+				}],
+				"originalValue": "dynamodb"
+			},
+			"ResourceOne": {
+				"resolutions": [{
+					"value": "S3 Bucket"
+				}],
+				"originalValue": "S3 Bucket"
+			}
+		},
+		"confirmationStatus": "None"
+	},
+	"inputTranscript": "Add S3 Bucket and dynamodb to project"
 }

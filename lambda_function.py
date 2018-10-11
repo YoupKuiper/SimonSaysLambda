@@ -1,10 +1,15 @@
 import boto3
 from TemplateBuilder import TemplateBuilder
+import os
+import sys
+import json
 
 client = boto3.client('cloudformation')
 
 
+
 def lambda_handler(event, context):
+    print(event)
     currentIntent = event['currentIntent']['name']
     if currentIntent == "CreateProject":
         return createProject(event)
@@ -16,7 +21,6 @@ def lambda_handler(event, context):
     #     return addCustomVPC(event)
     else:
         return buildLexResponse(0, "Error, unrecognized intent", None, None)
-
 
 def buildLexResponse(isRecognizedIntent, message, sessionAttributesToAppend, event):
     if not isRecognizedIntent:
@@ -54,7 +58,7 @@ def buildTemplate(event):
         t.addResource(resource)
     createStackFromTemplateBody(projectName, t.getTemplate())
     message = f"The resources were added to project {projectName}."
-    sessionAttributesToAppend = {event['currentIntent']['slots']}
+    sessionAttributesToAppend = {}
     return buildLexResponse(1, message, sessionAttributesToAppend, event)
 
 
@@ -106,3 +110,9 @@ def createStackFromTemplateBody(stackName, templateBody):
     #     templateURL = "https://s3-eu-west-1.amazonaws.com/demobucketsimonsays/demoTemplate.json"
     #     createStackFromURL(projectName, templateURL)
     #     return buildLexResponse(1, message, sessionAttributesToAppend, event)
+
+if os.environ['DEBUG'] == "True":
+    jsonFile = open(sys.argv[1], "r")
+    input = jsonFile.read()
+    inputDict = json.loads(input)
+    lambda_handler(inputDict, None)
