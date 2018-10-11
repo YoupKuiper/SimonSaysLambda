@@ -5,7 +5,6 @@ from dbhandler import dbhandler
 # using local debug db. Use getDB for online developmentDB
 table = dbhandler.getDebugDB()
 
-
 class TemplateBuilder:
     # Class for generating templates with cloudformation resources
 

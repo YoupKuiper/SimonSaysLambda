@@ -15,7 +15,6 @@ dictTemp = {
     }
 }
 
-
 dictTemp2 = {
     "DynamoDB": {
         "Properties": {

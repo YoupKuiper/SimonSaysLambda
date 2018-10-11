@@ -4,7 +4,6 @@ import boto3
 DB_NAME = 'SimonSaysCFNTemplates'
 DB_DEBUG_TYPE = 'dbdebug'
 
-
 class dbhandler:
     '''
     Subroutine for accessing the db table. For DB_DEBUG_TYPE make sure local
