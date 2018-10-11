@@ -15,8 +15,8 @@
 	"currentIntent": {
 		"name": "AddResources",
 		"slots": {
-			"ResourceTwo": "temp2",
-			"ResourceOne": "temp"
+			"ResourceTwo": "s3",
+			"ResourceOne": "lambda"
 		},
 		"slotDetails": {
 			"ResourceTwo": {
