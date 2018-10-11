@@ -5,7 +5,7 @@ import boto3
 from dbhandler import dbhandler
 
 # Get dynamodb table
-table = dbhandler.getDebugDB()
+table = dbhandler.getDB()
 
 # Read file from json and parse to dict
 jsonFile = open(sys.argv[1], "r")

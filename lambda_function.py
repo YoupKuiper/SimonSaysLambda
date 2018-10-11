@@ -54,7 +54,7 @@ def buildTemplate(event):
         t.addResource(resource)
     createStackFromTemplateBody(projectName, t.getTemplate())
     message = f"The resources were added to project {projectName}."
-    sessionAttributesToAppend = {}
+    sessionAttributesToAppend = {event['currentIntent']['slots']}
     return buildLexResponse(1, message, sessionAttributesToAppend, event)
 
 

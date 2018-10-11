@@ -3,7 +3,7 @@ import decimal
 from dbhandler import dbhandler
 
 # using local debug db. Use getDB for online developmentDB
-table = dbhandler.getDebugDB()
+table = dbhandler.getDB()
 
 class TemplateBuilder:
     # Class for generating templates with cloudformation resources
