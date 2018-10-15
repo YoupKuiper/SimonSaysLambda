@@ -1,10 +1,51 @@
-import boto3
-import json
+from context import dbhandler
 
-dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
+dynamodb = dbhandler.getDB()
 
 DB_NAME = 'SimonSaysCFNTemplates'
 table = dynamodb.Table(DB_NAME)
+
+dictLambda = {
+"AMIIDLookup": {
+  "Type": "AWS::Lambda::Function",
+  "Properties": {
+    "Handler": "index.handler",
+    "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
+    "Code": {
+      "S3Bucket": "lambda-functions",
+      "S3Key": "amilookup.zip"
+    },
+    "Runtime": "nodejs4.3",
+    "Timeout": 25,
+    "TracingConfig": {
+      "Mode": "Active"
+   }
+  }
+}
+}
+
+dictEC2 = {"MyEC2Instance" : {
+         "Type" : "AWS::EC2::Instance",
+         "Properties" : {
+            "ImageId" : "ami-79fd7eee",
+            "KeyName" : "testkey",
+            "BlockDeviceMappings" : [
+               {
+                  "DeviceName" : "/dev/sdm",
+                  "Ebs" : {
+                     "VolumeType" : "io1",
+                     "Iops" : "200",
+                     "DeleteOnTermination" : "false",
+                     "VolumeSize" : "20"
+                  }
+               },
+               {
+                  "DeviceName" : "/dev/sdk",
+                  "NoDevice" : {}
+               }
+            ]
+         }
+      }}
 
 dictBucket = {
     "HelloBucket": {
@@ -15,20 +56,20 @@ dictBucket = {
 dictDB = {
     "DynamoDB": {
         "Properties": {
-                "AttributeDefinitions":[
+                "AttributeDefinitions": [
                     {
                         'AttributeName': 'Type',
                         'AttributeType': 'S'
                     },
                 ],
-                "TableName":'TestDBForCloudFormation',
-                "KeySchema":[
+                "TableName": 'TestDBForCloudFormation',
+                "KeySchema": [
                     {
                         'AttributeName': 'Type',
                         'KeyType': 'HASH'
                     },
                 ],
-                "ProvisionedThroughput":{
+                "ProvisionedThroughput": {
                     'ReadCapacityUnits': 123,
                     'WriteCapacityUnits': 123
                 },
@@ -37,9 +78,7 @@ dictDB = {
     }
 }
 
-
-
-dicts = [dictBucket, dictDB]
-
 table.put_item(Item={"Type": "s3", "json": dictBucket})
 table.put_item(Item={"Type": "dynamodb", "json": dictDB})
+table.put_item(Item={"Type": "ec2", "json": dictEC2})
+table.put_item(Item={"Type": "lambda", "json": dictLambda})

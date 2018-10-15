@@ -16,7 +16,9 @@
 		"name": "AddResources",
 		"slots": {
 			"ResourceTwo": "s3",
-			"ResourceOne": "dynamodb"
+			"ResourceOne": "dynamodb",
+			"ResourceThree": "lambda",
+			"ResourceFour": "ec2"
 		},
 		"slotDetails": {
 			"ResourceTwo": {
