@@ -1,9 +1,6 @@
 from context import dbhandler
 
-dynamodb = dbhandler.getDB()
-
-DB_NAME = 'SimonSaysCFNTemplates'
-table = dynamodb.Table(DB_NAME)
+table = dbhandler.getDB()
 
 dictLambda = {
 "AMIIDLookup": {

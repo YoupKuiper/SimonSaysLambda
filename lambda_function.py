@@ -8,6 +8,7 @@ client = boto3.client('cloudformation')
 
 
 def lambda_handler(event, context):
+    print(event)
     currentIntent = event['currentIntent']['name']
     if currentIntent == "CreateProject":
         return createProject(event)
@@ -60,7 +61,7 @@ def buildTemplate(event):
         else:
             strtest = strtest + ", " + resource
     createStackFromTemplateBody(projectName, t.getTemplate())
-    message = f"The resources:{strtest} were added to project {projectName}."
+    message = f"The resources: {strtest} were added to project {projectName}."
     sessionAttributesToAppend = {}
     return buildLexResponse(1, message, sessionAttributesToAppend, event)
 
