@@ -8,7 +8,6 @@ client = boto3.client('cloudformation')
 
 
 def lambda_handler(event, context):
-    print(context)
     currentIntent = event['currentIntent']['name']
     if currentIntent == "CreateProject":
         return createProject(event)
@@ -16,6 +15,7 @@ def lambda_handler(event, context):
         return buildTemplate(event)
     else:
         return buildLexResponse(0, "Error, unrecognized intent", None, None)
+
 
 def buildLexResponse(isRecognizedIntent, message, sessionAttributesToAppend, event):
     if not isRecognizedIntent:
@@ -49,10 +49,16 @@ def buildTemplate(event):
     t = TemplateBuilder()
     projectName = event['sessionAttributes']['projectName']
     strtest = ""
-    for resourceSlot in event['currentIntent']['slots']:
-        resource = event['currentIntent']['slots'][resourceSlot]
+    resources = event['currentIntent']['slots']
+    for resourceSlot in resources:
+        resource = resources[resourceSlot]
         t.addResource(resource)
-        strtest = strtest + " " + resource
+        if list(resources).index(resourceSlot) is (len(resources) - 1):
+            strtest = strtest + " and " + resource
+        elif list(resources).index(resourceSlot) is 0:
+            strtest = strtest + resource
+        else:
+            strtest = strtest + ", " + resource
     createStackFromTemplateBody(projectName, t.getTemplate())
     message = f"The resources:{strtest} were added to project {projectName}."
     sessionAttributesToAppend = {}
@@ -78,6 +84,7 @@ def createStackFromTemplateBody(stackName, templateBody):
         TemplateBody=str(templateBody))
 
     print(response)
+
 
 if os.environ['DEBUG'] == "True":
     jsonFile = open(sys.argv[1], "r")
