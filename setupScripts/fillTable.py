@@ -2,9 +2,10 @@ from context import dbhandler
 
 table = dbhandler.getDB()
 
+
 dictLambda = {
 "AMIIDLookup": {
-  "Type": "AWS::Lambda::Function",
+  "Id": "AWS::Lambda::Function",
   "Properties": {
     "Handler": "index.handler",
     "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
@@ -22,7 +23,7 @@ dictLambda = {
 }
 
 dictEC2 = {"MyEC2Instance" : {
-         "Type" : "AWS::EC2::Instance",
+         "Id" : "AWS::EC2::Instance",
          "Properties" : {
             "ImageId" : "ami-79fd7eee",
             "KeyName" : "testkey",
@@ -46,7 +47,7 @@ dictEC2 = {"MyEC2Instance" : {
 
 dictBucket = {
     "HelloBucket": {
-      "Type": "AWS::S3::Bucket"
+      "Id": "AWS::S3::Bucket"
     }
 }
 
@@ -71,11 +72,11 @@ dictDB = {
                     'WriteCapacityUnits': 123
                 },
         },
-        "Type": "AWS::DynamoDB::Table"
+        "Id": "AWS::DynamoDB::Table"
     }
 }
 
-table.put_item(Item={"Type": "s3", "json": dictBucket})
-table.put_item(Item={"Type": "dynamodb", "json": dictDB})
-table.put_item(Item={"Type": "ec2", "json": dictEC2})
-table.put_item(Item={"Type": "lambda", "json": dictLambda})
+table.put_item(Item={"Id": "s3", "json": dictBucket})
+table.put_item(Item={"Id": "dynamodb", "json": dictDB})
+table.put_item(Item={"Id": "ec2", "json": dictEC2})
+table.put_item(Item={"Id": "lambda", "json": dictLambda})
