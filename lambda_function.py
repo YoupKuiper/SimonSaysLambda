@@ -69,8 +69,10 @@ def buildTemplate(event):
         resource = resources[resourceSlot]
         if resource in getAllowedResources():
             t.addResource(resource)
+        elif resource is None:
+            print("None")
         else:
-            buildLexResponse(1, f"Resource: {resource} not recognized",[],event)
+            return buildLexResponse(1, f"Resource: {resource} not recognized",[],event)
         if list(resources).index(resourceSlot) is (len(resources) - 1):
             strtest = strtest + " and " + resource
         elif list(resources).index(resourceSlot) is 0:
