@@ -24,7 +24,6 @@ class TemplateBuilder:
         print(json.dumps(self.__tempBase, separators=(',',':'), indent=4, cls=DecimalEncoder))
 
     def getTemplate(self):
-        #return self.__tempBase
         return (json.dumps(self.__tempBase, separators=(',',':'), indent=4, cls=DecimalEncoder))
 
 

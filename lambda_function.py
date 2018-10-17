@@ -5,7 +5,8 @@ import sys
 import json
 from dbhandler import dbhandler
 
-client = boto3.client('cloudformation')
+cloudFormationClient = boto3.client('cloudformation')
+lexBotClient = boto3.client('lex-models')
 
 projTable = dbhandler.getDB("project")
 
@@ -18,11 +19,11 @@ def lambda_handler(event, context):
     elif currentIntent == "AddResources":
         return buildTemplate(event)
     else:
-        return buildLexResponse(0, "Error, unrecognized intent", None, None)
+        return buildLexResponse(1, "Error, unrecognized intent", None, None)
 
 
-def buildLexResponse(isRecognizedIntent, message, sessionAttributesToAppend, event):
-    if not isRecognizedIntent:
+def buildLexResponse(error, message, sessionAttributesToAppend, event):
+    if error:
         message = "Error, unrecognized intent"
     if sessionAttributesToAppend is not None:
         sessionAttributes = appendSessionAttributes(event['sessionAttributes'], sessionAttributesToAppend)
@@ -40,6 +41,15 @@ def buildLexResponse(isRecognizedIntent, message, sessionAttributesToAppend, eve
         }
     }
 
+def getAllowedResources():
+    allowedresources = []
+    response = lexBotClient.get_slot_type(
+                                            name='Resources',
+                                            version='3'
+                                            )
+    for value in response['enumerationValues']:
+        allowedresources = allowedresources + (value['synonyms'])
+    return allowedresources
 
 def createProject(event):
     projectName = event['currentIntent']['slots']['ProjectName']
@@ -47,7 +57,7 @@ def createProject(event):
     sessionAttributesToAppend = {"projectName": projectName}
     projTable.put_item(Item={"ProjectName": projectName, "resources": []})
 
-    return buildLexResponse(1, message, sessionAttributesToAppend, event)
+    return buildLexResponse(0, message, sessionAttributesToAppend, event)
 
 
 def buildTemplate(event):
@@ -57,8 +67,10 @@ def buildTemplate(event):
     resources = event['currentIntent']['slots']
     for resourceSlot in resources:
         resource = resources[resourceSlot]
-        print(resource)
-        t.addResource(resource)
+        if resource in getAllowedResources():
+            t.addResource(resource)
+        else:
+            buildLexResponse(1, f"Resource: {resource} not recognized",[],event)
         if list(resources).index(resourceSlot) is (len(resources) - 1):
             strtest = strtest + " and " + resource
         elif list(resources).index(resourceSlot) is 0:
@@ -66,10 +78,10 @@ def buildTemplate(event):
         else:
             strtest = strtest + ", " + resource
     projTable.put_item(Item={"ProjectName": projectName, "resources": list(resources.values())})
-    createStackFromTemplateBody(projectName, t.getTemplate())
+    #createStackFromTemplateBody(projectName, t.getTemplate())
     message = f"The resources: {strtest} were added to project {projectName}."
     sessionAttributesToAppend = {}
-    return buildLexResponse(1, message, sessionAttributesToAppend, event)
+    return buildLexResponse(0, message, sessionAttributesToAppend, event)
 
 
 def appendSessionAttributes(attributes, attributesToAppend):
@@ -78,7 +90,7 @@ def appendSessionAttributes(attributes, attributesToAppend):
 
 
 def createStackFromURL(stackName, templateURL):
-    response = client.create_stack(
+    response = cloudFormationClient.create_stack(
         StackName=stackName,
         TemplateURL=templateURL)
 
@@ -86,7 +98,7 @@ def createStackFromURL(stackName, templateURL):
 
 
 def createStackFromTemplateBody(stackName, templateBody):
-    response = client.create_stack(
+    response = cloudFormationClient.create_stack(
         StackName=stackName,
         TemplateBody=str(templateBody))
 
