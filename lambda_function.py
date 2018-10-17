@@ -23,8 +23,6 @@ def lambda_handler(event, context):
 
 
 def buildLexResponse(error, message, sessionAttributesToAppend, event):
-    if error:
-        message = "Error, unrecognized intent"
     if sessionAttributesToAppend is not None:
         sessionAttributes = appendSessionAttributes(event['sessionAttributes'], sessionAttributesToAppend)
     else:
