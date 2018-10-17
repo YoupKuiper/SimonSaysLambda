@@ -21,3 +21,23 @@ table = dynamodb.create_table(
         'WriteCapacityUnits': 123
     }
 )
+
+table2 = dynamodb.create_table(
+    AttributeDefinitions=[
+        {
+            'AttributeName': 'ProjectName',
+            'AttributeType': 'S'
+        },
+    ],
+    TableName='SimonSaysProjects',
+    KeySchema=[
+        {
+            'AttributeName': 'ProjectName',
+            'KeyType': 'HASH'
+        },
+    ],
+    ProvisionedThroughput={
+        'ReadCapacityUnits': 123,
+        'WriteCapacityUnits': 123
+    }
+)

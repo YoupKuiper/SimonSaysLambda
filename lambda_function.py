@@ -3,8 +3,11 @@ from TemplateBuilder import TemplateBuilder
 import os
 import sys
 import json
+from dbhandler import dbhandler
 
 client = boto3.client('cloudformation')
+
+projTable = dbhandler.getDB("project")
 
 
 def lambda_handler(event, context):
@@ -42,6 +45,7 @@ def createProject(event):
     projectName = event['currentIntent']['slots']['ProjectName']
     message = f"Project {projectName} has been created, please define the resources you want to have in your project"
     sessionAttributesToAppend = {"projectName": projectName}
+    projTable.put_item(Item={"ProjectName": projectName, "resources": []})
 
     return buildLexResponse(1, message, sessionAttributesToAppend, event)
 
@@ -53,6 +57,7 @@ def buildTemplate(event):
     resources = event['currentIntent']['slots']
     for resourceSlot in resources:
         resource = resources[resourceSlot]
+        print(resource)
         t.addResource(resource)
         if list(resources).index(resourceSlot) is (len(resources) - 1):
             strtest = strtest + " and " + resource
@@ -60,6 +65,7 @@ def buildTemplate(event):
             strtest = strtest + resource
         else:
             strtest = strtest + ", " + resource
+    projTable.put_item(Item={"ProjectName": projectName, "resources": list(resources.values())})
     createStackFromTemplateBody(projectName, t.getTemplate())
     message = f"The resources: {strtest} were added to project {projectName}."
     sessionAttributesToAppend = {}
