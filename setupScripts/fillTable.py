@@ -1,25 +1,25 @@
 from context import dbhandler
 
-table = dbhandler.getDB()
+table = dbhandler.getDB("template")
 
 
 dictLambda = {
-"AMIIDLookup": {
-  "Id": "AWS::Lambda::Function",
-  "Properties": {
-    "Handler": "index.handler",
-    "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
-    "Code": {
-      "S3Bucket": "lambda-functions",
-      "S3Key": "amilookup.zip"
-    },
-    "Runtime": "nodejs4.3",
-    "Timeout": 25,
-    "TracingConfig": {
-      "Mode": "Active"
-   }
-  }
-}
+    "AMIIDLookup": {
+      "Id": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "index.handler",
+        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "lambda-functions",
+          "S3Key": "amilookup.zip"
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": 25,
+        "TracingConfig": {
+          "Mode": "Active"
+        }
+      }
+    }
 }
 
 dictEC2 = {"MyEC2Instance" : {

@@ -3,7 +3,7 @@ import decimal
 from dbhandler import dbhandler
 
 # using local debug db. Use getDB for online developmentDB
-table = dbhandler.getDB()
+table = dbhandler.getDB("template")
 
 
 class TemplateBuilder:
@@ -24,7 +24,6 @@ class TemplateBuilder:
         print(json.dumps(self.__tempBase, separators=(',',':'), indent=4, cls=DecimalEncoder))
 
     def getTemplate(self):
-        #return self.__tempBase
         return (json.dumps(self.__tempBase, separators=(',',':'), indent=4, cls=DecimalEncoder))
 
 

@@ -2,7 +2,6 @@ import sys
 import json
 import boto3
 from dbhandler import dbhandler
-import time
 # Use this script to add templates for resources to the database and add slottypes to lex
 
 # Read file from json and parse to dict
