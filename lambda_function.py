@@ -108,14 +108,14 @@ def addResourcesToProject(event):
                 messageInvalid = f"The resources: {invalidResourceString} were invalid, please restate them."
                 message = messageValid + " " + messageInvalid
             return buildLexResponse(0, message, {}, event)
-        projectName = event['sessionAttributes']['projectName']
-        valid, invalid = validateResources(resources)
-        for resource in valid:
-            t.addResource(resource)
-        projTable.put_item(Item={"ProjectName": projectName, "resources": list(resources.values())})
-        sessionAttributesToAppend = {}
-        message = "Resources added to project"
-        return buildLexResponse(0, message, sessionAttributesToAppend, event)
+    projectName = event['sessionAttributes']['projectName']
+    valid, invalid = validateResources(resources)
+    for resource in valid:
+        t.addResource(resource)
+    projTable.put_item(Item={"ProjectName": projectName, "resources": list(resources.values())})
+    sessionAttributesToAppend = {}
+    message = "Resources added to project"
+    return buildLexResponse(0, message, sessionAttributesToAppend, event)
 
 def deployProject(event):
     projectName = event['sessionAttributes']['projectName']
