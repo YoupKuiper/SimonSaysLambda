@@ -48,10 +48,12 @@ def getAllowedResources():
     allowedresources = []
     response = lexBotClient.get_slot_type(
                                             name='Resources',
-                                            version='3'
+                                            version='$LATEST'
                                             )
     for value in response['enumerationValues']:
-        allowedresources = allowedresources + (value['synonyms'])
+        #allowedresources = allowedresources + (value['synonyms'])
+        allowedresources.append(value['value'])
+        print(value)
     return allowedresources
 
 
@@ -101,13 +103,18 @@ def addResourcesToProject(event):
             invalidResourceString = listResponseBuilder(invalid)
             if len(valid) == 1:
                 messageValid = f"The resource: {validResourceString} is valid."
+            elif len(valid) == 0:
+                messageValid = ""
             else:
                 messageValid = f"The resources: {validResourceString} are valid."
             if len(invalid) == 1:
                 messageInvalid = f"The resource: {invalidResourceString} is invalid, please restate it."
+            elif len(invalid) == 0:
+                messageInvalid = ""
             else:
-                messageInvalid = f"The resources: {invalidResourceString} were invalid, please restate them."
+                messageInvalid = f"The resources: {invalidResourceString} are invalid, please restate them."
             message = messageValid + " " + messageInvalid
+            print(message)
             return buildLexResponse(0, message, {}, event)
     projectName = event['sessionAttributes']['projectName']
     valid, invalid = validateResources(resources)
@@ -115,7 +122,7 @@ def addResourcesToProject(event):
         t.addResource(resource)
     projTable.put_item(Item={"ProjectName": projectName, "resources": list(resources.values())})
     sessionAttributesToAppend = {}
-    message = "Resources added to project"
+    message = f"Resources: {valid} added to project, you can deploy your project with: Deploy Project"
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
 
 
