@@ -15,7 +15,7 @@ inputDict = json.loads(input)
 type = sys.argv[2]
 
 # Get dynamodb table
-table = dbhandler.getDB()
+table = dbhandler.getDB("template")
 
 # Put the resource template in the db if it doesnt exist already
 response = table.put_item(
