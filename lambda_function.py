@@ -57,6 +57,7 @@ def getAllowedResources():
 
 # Use the given name as the name for the project
 def createProject(event):
+    t.clear()
     projectName = event['currentIntent']['slots']['ProjectName']
     message = f"Project {projectName} has been created, please define the resources you want to have in your project"
     sessionAttributesToAppend = {"projectName": projectName}
@@ -116,6 +117,7 @@ def addResourcesToProject(event):
     sessionAttributesToAppend = {}
     message = "Resources added to project"
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
+
 
 def deployProject(event):
     projectName = event['sessionAttributes']['projectName']
