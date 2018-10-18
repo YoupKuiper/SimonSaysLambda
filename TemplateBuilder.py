@@ -15,7 +15,7 @@ class TemplateBuilder:
 
         # Get resources from the database and add to the base
     def addResource(self, type):
-        resource = table.get_item(Key={'Type': type})
+        resource = table.get_item(Key={'Id': type})
         item = resource["Item"]["json"]
         self.__tempBase['Resources'].update(item)
 
