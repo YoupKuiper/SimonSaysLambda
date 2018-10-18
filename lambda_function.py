@@ -95,7 +95,7 @@ def addResourcesToProject(event):
     source = event['invocationSource']
     if source == 'DialogCodeHook':
         valid, invalid = validateResources(resources)
-        if len(invalid) == 0:
+        if len(invalid) is not 0:
             validResourceString = listResponseBuilder(valid)
             invalidResourceString = listResponseBuilder(invalid)
             if len(valid) == 1:
@@ -106,7 +106,7 @@ def addResourcesToProject(event):
                 messageInvalid = f"The resource: {invalidResourceString} is invalid, please restate it."
             else:
                 messageInvalid = f"The resources: {invalidResourceString} were invalid, please restate them."
-                message = messageValid + " " + messageInvalid
+            message = messageValid + " " + messageInvalid
             return buildLexResponse(0, message, {}, event)
     projectName = event['sessionAttributes']['projectName']
     valid, invalid = validateResources(resources)

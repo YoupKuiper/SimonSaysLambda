@@ -5,7 +5,7 @@ table = dbhandler.getDB("template")
 
 dictLambda = {
     "AMIIDLookup": {
-      "Id": "AWS::Lambda::Function",
+      "Type": "AWS::Lambda::Function",
       "Properties": {
         "Handler": "index.handler",
         "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
@@ -23,7 +23,7 @@ dictLambda = {
 }
 
 dictEC2 = {"MyEC2Instance" : {
-         "Id" : "AWS::EC2::Instance",
+         "Type" : "AWS::EC2::Instance",
          "Properties" : {
             "ImageId" : "ami-79fd7eee",
             "KeyName" : "testkey",
@@ -47,7 +47,7 @@ dictEC2 = {"MyEC2Instance" : {
 
 dictBucket = {
     "HelloBucket": {
-      "Id": "AWS::S3::Bucket"
+      "Type": "AWS::S3::Bucket"
     }
 }
 
@@ -72,7 +72,7 @@ dictDB = {
                     'WriteCapacityUnits': 123
                 },
         },
-        "Id": "AWS::DynamoDB::Table"
+        "Type": "AWS::DynamoDB::Table"
     }
 }
 
