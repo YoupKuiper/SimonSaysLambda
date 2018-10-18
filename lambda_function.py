@@ -99,7 +99,7 @@ def addResourcesToProject(event):
     projTable.put_item(Item={"ProjectName": projectName, "resources": list(resources.values())})
     sessionAttributesToAppend = {}
     validString = listResponseBuilder(valid)
-    if valid == None:
+    if len(valid) == 0:
         message = f"I didn't understand. Please restate your command"
     else:
         message = f"Resources: {validString} added to project, you can deploy your project with: Deploy Project"
