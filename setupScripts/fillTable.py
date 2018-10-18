@@ -2,23 +2,28 @@ from context import dbhandler
 
 table = dbhandler.getDB("template")
 
+
 dictLambda = {
-  "mainLambda": {
-    "Type": "AWS::Lambda::Function",
-    "Properties": {
-      "Code": {
-        "S3Bucket": "projectsourcelambda",
-        "S3Key": "myFunctionName.zip"
-      },
-      "Handler": "myFunctionName/lambda_function.lambda_handler",
-      "Role": "arn:aws:iam::835483671006:role/lambda_basic_execution",
-      "Runtime": "python3.6"
+    "AMIIDLookup": {
+      "Id": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "index.handler",
+        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
+        "Code": {
+          "S3Bucket": "lambda-functions",
+          "S3Key": "amilookup.zip"
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": 25,
+        "TracingConfig": {
+          "Mode": "Active"
+        }
+      }
     }
-  }
 }
 
 dictEC2 = {"MyEC2Instance" : {
-         "Type" : "AWS::EC2::Instance",
+         "Id" : "AWS::EC2::Instance",
          "Properties" : {
             "ImageId" : "ami-79fd7eee",
             "KeyName" : "testkey",
@@ -42,7 +47,7 @@ dictEC2 = {"MyEC2Instance" : {
 
 dictBucket = {
     "HelloBucket": {
-      "Type": "AWS::S3::Bucket"
+      "Id": "AWS::S3::Bucket"
     }
 }
 
@@ -67,11 +72,11 @@ dictDB = {
                     'WriteCapacityUnits': 123
                 },
         },
-        "Type": "AWS::DynamoDB::Table"
+        "Id": "AWS::DynamoDB::Table"
     }
 }
 
-table.put_item(Item={"Type": "s3", "json": dictBucket})
-table.put_item(Item={"Type": "dynamodb", "json": dictDB})
-table.put_item(Item={"Type": "ec2", "json": dictEC2})
-table.put_item(Item={"Type": "lambda", "json": dictLambda})
+table.put_item(Item={"Id": "s3", "json": dictBucket})
+table.put_item(Item={"Id": "dynamodb", "json": dictDB})
+table.put_item(Item={"Id": "ec2", "json": dictEC2})
+table.put_item(Item={"Id": "lambda", "json": dictLambda})

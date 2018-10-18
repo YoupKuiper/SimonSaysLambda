@@ -5,14 +5,14 @@ dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
 table = dynamodb.create_table(
     AttributeDefinitions=[
         {
-            'AttributeName': 'Type',
+            'AttributeName': 'Id',
             'AttributeType': 'S'
         },
     ],
     TableName='SimonSaysCFNTemplates',
     KeySchema=[
         {
-            'AttributeName': 'Type',
+            'AttributeName': 'Id',
             'KeyType': 'HASH'
         },
     ],
