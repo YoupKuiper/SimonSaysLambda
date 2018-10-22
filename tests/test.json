@@ -1,0 +1,51 @@
+{
+    "messageVersion":"1.0",
+    "invocationSource":"DialogCodeHook",
+    "userId":"6ffagj2i5pmuwckaqg2vnpin1fyw2khb",
+    "sessionAttributes":{
+        "projectName":"teststack"
+    },
+    "requestAttributes":null,
+    "bot":{
+        "name":"SimonSays",
+        "alias":"$LATEST",
+        "version":"$LATEST"
+    },
+    "outputDialogMode":"Text",
+    "currentIntent":{
+        "name":"AddResources",
+        "slots":{
+            "ResourceTwo":"dynamobd",
+            "ResourceThree":"lambda",
+            "ResourceOne":"s. three"
+        },
+        "slotDetails":{
+            "ResourceTwo":{
+                "resolutions":[
+                    {
+                        "value":"dynamodb"
+                    }
+                ],
+                "originalValue":"dynamodb"
+            },
+            "ResourceThree":{
+                "resolutions":[
+                    {
+                        "value":"lambda"
+                    }
+                ],
+                "originalValue":"lambda"
+            },
+            "ResourceOne":{
+                "resolutions":[
+                    {
+                        "value":"s3"
+                    }
+                ],
+                "originalValue":"s3"
+            }
+        },
+        "confirmationStatus":"None"
+    },
+    "inputTranscript":"add s3 dynamodb and lambda"
+}
