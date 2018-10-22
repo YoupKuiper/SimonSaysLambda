@@ -1,0 +1,5 @@
+cfn-flip==1.0.3
+Click==7.0
+PyYAML==3.13
+six==1.11.0
+troposphere==2.3.3
