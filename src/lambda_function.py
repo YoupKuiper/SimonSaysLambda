@@ -48,15 +48,17 @@ def getAllowedResources():
     allowedresources = []
     response = lexBotClient.get_slot_type(
                                             name='Resources',
-                                            version='3'
+                                            version='$LATEST'
                                             )
     for value in response['enumerationValues']:
-        allowedresources = allowedresources + (value['synonyms'])
+        #allowedresources = allowedresources + (value['synonyms'])
+        allowedresources.append(value['value'])
     return allowedresources
 
 
 # Use the given name as the name for the project
 def createProject(event):
+    t.clear()
     projectName = event['currentIntent']['slots']['ProjectName']
     message = f"Project {projectName} has been created, please define the resources you want to have in your project"
     sessionAttributesToAppend = {"projectName": projectName}
@@ -67,15 +69,13 @@ def createProject(event):
 
 # Create lists of both valid and invalid resources
 def validateResources(resourcesToValidate):
+    print(resourcesToValidate)
     valid = []
-    invalid = []
     for resourceSlot in resourcesToValidate:
         resource = resourcesToValidate[resourceSlot]
         if resource in getAllowedResources():
             valid.append(resource)
-        elif resource is not None:
-            invalid.append(resource)
-    return valid, invalid
+    return valid
 
 
 def listResponseBuilder(list):
@@ -92,30 +92,19 @@ def listResponseBuilder(list):
 
 def addResourcesToProject(event):
     resources = event['currentIntent']['slots']
-    source = event['invocationSource']
-    if source == 'DialogCodeHook':
-        valid, invalid = validateResources(resources)
-        if len(invalid) == 0:
-            validResourceString = listResponseBuilder(valid)
-            invalidResourceString = listResponseBuilder(invalid)
-            if len(valid) == 1:
-                messageValid = f"The resource: {validResourceString} is valid."
-            else:
-                messageValid = f"The resources: {validResourceString} are valid."
-            if len(invalid) == 1:
-                messageInvalid = f"The resource: {invalidResourceString} is invalid, please restate it."
-            else:
-                messageInvalid = f"The resources: {invalidResourceString} were invalid, please restate them."
-                message = messageValid + " " + messageInvalid
-            return buildLexResponse(0, message, {}, event)
     projectName = event['sessionAttributes']['projectName']
-    valid, invalid = validateResources(resources)
+    valid = validateResources(resources)
     for resource in valid:
         t.addResource(resource)
     projTable.put_item(Item={"ProjectName": projectName, "resources": list(resources.values())})
     sessionAttributesToAppend = {}
-    message = "Resources added to project"
+    validString = listResponseBuilder(valid)
+    if valid:
+        message = f"I have added {validString} to project, you can deploy your project with: Deploy Project or add some other resources"
+    else:
+        message = f"I didn't understand. Please restate your command"
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
+
 
 def deployProject(event):
     projectName = event['sessionAttributes']['projectName']

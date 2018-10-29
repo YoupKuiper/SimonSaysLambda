@@ -1,6 +1,6 @@
 {
     "messageVersion":"1.0",
-    "invocationSource":"FulfillmentCodeHook",
+    "invocationSource":"DialogCodeHook",
     "userId":"6ffagj2i5pmuwckaqg2vnpin1fyw2khb",
     "sessionAttributes":{
         "projectName":"teststack"
@@ -15,9 +15,9 @@
     "currentIntent":{
         "name":"AddResources",
         "slots":{
-            "ResourceTwo":"dynamodb",
+            "ResourceTwo":"dynamobd",
             "ResourceThree":"lambda",
-            "ResourceOne":"s3"
+            "ResourceOne":"s. three"
         },
         "slotDetails":{
             "ResourceTwo":{

@@ -4,26 +4,22 @@ table = dbhandler.getDB("template")
 
 
 dictLambda = {
-    "AMIIDLookup": {
-      "Id": "AWS::Lambda::Function",
-      "Properties": {
-        "Handler": "index.handler",
-        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
-        "Code": {
-          "S3Bucket": "lambda-functions",
-          "S3Key": "amilookup.zip"
-        },
-        "Runtime": "nodejs4.3",
-        "Timeout": 25,
-        "TracingConfig": {
-          "Mode": "Active"
-        }
-      }
+  "mainLambda": {
+    "Type": "AWS::Lambda::Function",
+    "Properties": {
+      "Code": {
+        "S3Bucket": "projectsourcelambda",
+        "S3Key": "myFunctionName.zip"
+      },
+      "Handler": "myFunctionName/lambda_function.lambda_handler",
+      "Role": "arn:aws:iam::835483671006:role/lambda_basic_execution",
+      "Runtime": "python3.6"
     }
+  }
 }
 
 dictEC2 = {"MyEC2Instance" : {
-         "Id" : "AWS::EC2::Instance",
+         "Type" : "AWS::EC2::Instance",
          "Properties" : {
             "ImageId" : "ami-79fd7eee",
             "KeyName" : "testkey",
@@ -47,7 +43,7 @@ dictEC2 = {"MyEC2Instance" : {
 
 dictBucket = {
     "HelloBucket": {
-      "Id": "AWS::S3::Bucket"
+      "Type": "AWS::S3::Bucket"
     }
 }
 
@@ -72,7 +68,7 @@ dictDB = {
                     'WriteCapacityUnits': 123
                 },
         },
-        "Id": "AWS::DynamoDB::Table"
+        "Type": "AWS::DynamoDB::Table"
     }
 }
 
