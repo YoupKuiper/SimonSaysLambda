@@ -19,7 +19,7 @@ table = dbhandler.getDB("template")
 
 # Put the resource template in the db if it doesnt exist already
 response = table.put_item(
-    Item={"Id": type, "json": inputDict},
+    Item={"Id": type, "json": input},
     ConditionExpression='attribute_not_exists(Id)'
     )
 
@@ -47,7 +47,7 @@ newSlotType = client.put_slot_type(
     description='test',
     enumerationValues=enumerationValues,
     checksum='',
-    valueSelectionStrategy='ORIGINAL_VALUE',
+    valueSelectionStrategy='TOP_RESOLUTION',
     createVersion=False
 )
 
