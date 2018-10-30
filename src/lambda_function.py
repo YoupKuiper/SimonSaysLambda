@@ -67,7 +67,7 @@ def createProject(event):
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
 
 
-# Create lists of both valid and invalid resources
+# Create list of valid resources
 def validateResources(resourcesToValidate):
     print(resourcesToValidate)
     valid = []

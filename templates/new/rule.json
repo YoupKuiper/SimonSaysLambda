@@ -1,0 +1,74 @@
+{
+  "EventRule": {
+    "Type": "AWS::Events::Rule",
+    "Properties": {
+      "Description": "EventRule",
+      "EventPattern": {
+        "source": [
+          "aws.codecommit"
+        ],
+        "detail-type": [
+          "CodeCommit Repository State Change"
+        ],
+        "resources": [
+          {
+            "Fn::GetAtt": [
+              "MyRepo",
+              "Arn"
+            ]
+          }
+        ],
+        "detail": {
+          "event": [
+            "referenceCreated",
+            "referenceUpdated"
+          ],
+          "referenceType": [
+            "branch"
+          ],
+          "referenceName": [
+            "master"
+          ]
+        }
+      },
+      "State": "ENABLED",
+      "Targets": [
+        {
+          "Arn": {
+            "Fn::GetAtt": [
+              "AppPipeline",
+              "Arn"
+            ]
+          },
+          "Id": {
+            "Fn::Join": [
+              "",
+              [
+                "codepipeline-",
+                {
+                  "Ref": "ProjectName"
+                }
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "PermissionForEventsToInvokeLambda": {
+    "Type": "AWS::Lambda::Permission",
+    "Properties": {
+      "FunctionName": {
+        "Ref": "LambdaFunction"
+      },
+      "Action": "lambda:InvokeFunction",
+      "Principal": "events.amazonaws.com",
+      "SourceArn": {
+        "Fn::GetAtt": [
+          "EventRule",
+          "Arn"
+        ]
+      }
+    }
+  }
+}
