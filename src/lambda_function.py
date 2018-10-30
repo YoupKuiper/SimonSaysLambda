@@ -92,17 +92,34 @@ def listResponseBuilder(list):
 
 def addResourcesToProject(event):
     resources = event['currentIntent']['slots']
-    projectName = event['sessionAttributes']['projectName']
+    sessionAttributes = event['sessionAttributes']
+    projectName = sessionAttributes['projectName']
+
+    # If resources already exist, add them all together
+    if(hasattr(sessionAttributes, 'resources')):
+        resources.extend(sessionAttributes['resources'])
+
+    # Validate resources
     valid = validateResources(resources)
+
+    # Append valid resources to session attributes
+    sessionAttributesToAppend = {'resources': valid}
+
+    # Add resources to template
     for resource in valid:
         t.addResource(resource)
+
+    # Add project to projects table
     projTable.put_item(Item={"ProjectName": projectName, "resources": list(resources.values())})
-    sessionAttributesToAppend = {}
+
+    # Set the response message
     validString = listResponseBuilder(valid)
     if valid:
-        message = f"I have added {validString} to project, you can deploy your project with: Deploy Project or add some other resources"
+        message = f"I have added {validString} to the project, you can deploy your project with: Deploy Project or add some other resources"
+    elif "pipeline" in resources and "lambda" not in resources:
+        message = f"Adding a pipeline without a lambda is not supported."
     else:
-        message = f"I didn't understand. Please restate your command"
+        message = f"I didn't understand. Please restate your command."
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
 
 
