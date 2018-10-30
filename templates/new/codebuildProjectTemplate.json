@@ -1,0 +1,39 @@
+{"Project": {
+  "Type": "AWS::CodeBuild::Project",
+  "Properties": {
+    "Name": {
+      "Fn::Join": [
+        "",
+        [
+          {
+            "Ref": "ProjectName"
+          },
+          "Build"
+        ]
+      ]
+    },
+    "Environment": {
+      "Type": "LINUX_CONTAINER",
+      "ComputeType": "BUILD_GENERAL1_SMALL",
+      "Image": "aws/codebuild/nodejs:8.11.0"
+    },
+    "ServiceRole": {
+      "Fn::Join": [
+        "",
+        [
+          {
+            "Ref": "ProjectName"
+          },
+          "Role"
+        ]
+      ]
+    },
+    "Artifacts": {
+      "Type": "CODEPIPELINE"
+    },
+    "Source": {
+      "Type": "CODEPIPELINE"
+    }
+  }
+}
+}

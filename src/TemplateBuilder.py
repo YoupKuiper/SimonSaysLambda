@@ -2,7 +2,6 @@ import json
 import decimal
 from dbhandler import dbhandler
 
-# using local debug db. Use getDB for online developmentDB
 table = dbhandler.getDB("template")
 
 
@@ -11,10 +10,10 @@ class TemplateBuilder:
 
         # Create tempBase for resources
     def __init__(self):
-        self.__tempBase = {'Resources': {}}
+        self.__tempBase = {"AWSTemplateFormatVersion": "2010-09-09" ,'Parameters' : {"ProjectName": {"Default": "SvenTestBuild", "Type": "String"}}, 'Resources': {}}
 
     def clear(self):
-        self.__tempBase = {'Resources': {}}
+        self.__tempBase = {"AWSTemplateFormatVersion": "2010-09-09" ,'Parameters' : {"ProjectName": {"Default": "SvenTestBuild", "Type": "String"}}, 'Resources': {}}
 
         # Get resources from the database and add to the base
     def addResource(self, type):
