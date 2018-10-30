@@ -50,5 +50,3 @@ newSlotType = client.put_slot_type(
     valueSelectionStrategy='TOP_RESOLUTION',
     createVersion=False
 )
-
-

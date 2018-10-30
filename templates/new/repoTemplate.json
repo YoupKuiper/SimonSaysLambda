@@ -1,0 +1,17 @@
+{"MyRepo": {
+  "Properties": {
+    "RepositoryDescription": "a description",
+    "RepositoryName": {
+      "Fn::Join": [
+        "",
+        [
+          {
+            "Ref": "ProjectName"
+          },
+          "Repo"
+        ]
+      ]
+    }
+  },
+  "Type": "AWS::CodeCommit::Repository"
+}}
