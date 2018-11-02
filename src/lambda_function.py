@@ -27,7 +27,8 @@ def lambda_handler(event, context):
 
 def buildLexResponse(error, message, sessionAttributesToAppend, event):
     if sessionAttributesToAppend is not None:
-        sessionAttributes = appendSessionAttributes(event['sessionAttributes'], sessionAttributesToAppend)
+        sessionAttributes = appendSessionAttributes(
+            event['sessionAttributes'], sessionAttributesToAppend)
     else:
         sessionAttributes = event['sessionAttributes']
 
@@ -38,9 +39,9 @@ def buildLexResponse(error, message, sessionAttributesToAppend, event):
             "message": {
                 "contentType": "PlainText",
                 "content": message
-            },
+                },
+            }
         }
-    }
 
 
 # Create a list of allowed resources
@@ -51,7 +52,6 @@ def getAllowedResources():
                                             version='$LATEST'
                                             )
     for value in response['enumerationValues']:
-        #allowedresources = allowedresources + (value['synonyms'])
         allowedresources.append(value['value'])
     return allowedresources
 
@@ -78,6 +78,7 @@ def validateResources(resourcesToValidate):
     return valid
 
 
+# Create a well formed listed response for Lex to use
 def listResponseBuilder(list):
     listresponse = ""
     for resource in list:
@@ -113,7 +114,8 @@ def addResourcesToProject(event):
         t.addResource(resource)
 
     # Add project to projects table
-    projTable.put_item(Item={"ProjectName": projectName, "resources": list(resources.values())})
+    projTable.put_item(Item={"ProjectName": projectName,
+                             "resources": list(resources.values())})
 
     # Set the response message
     validString = listResponseBuilder(valid)
@@ -126,6 +128,7 @@ def addResourcesToProject(event):
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
 
 
+# Deploy a created project by launching the stack with cloudformation
 def deployProject(event):
     projectName = event['sessionAttributes']['projectName']
     createStackFromTemplateBody(projectName, t.getTemplate())
