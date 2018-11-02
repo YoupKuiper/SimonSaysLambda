@@ -6,8 +6,9 @@ phases:
       - echo Compiling the Python code...
   post_build:
     commands:
-      - aws cloudformation package --template-file samTemplate.yaml --s3-bucket awscodepipelinetestbucketcf
-                                   --output-template-file outputSamTemplate.yaml
+      - aws cloudformation package --template-file template.json --s3-bucket awscodepipelinetestbucketcf
+                                   --output-template-file outputTemplate.json
 artifacts:
   files:
-    - outputSamTemplate.yaml
+    - template.json
+    - outputTemplate.json
