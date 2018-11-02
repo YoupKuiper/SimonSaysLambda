@@ -69,11 +69,11 @@ def createProject(event):
 
 # Create list of valid resources
 def validateResources(resourcesToValidate):
-    print(resourcesToValidate)
     valid = []
+    allowedResources = getAllowedResources()
     for resourceSlot in resourcesToValidate:
         resource = resourcesToValidate[resourceSlot]
-        if resource in getAllowedResources():
+        if resource in allowedResources:
             valid.append(resource)
     return valid
 
@@ -102,6 +102,9 @@ def addResourcesToProject(event):
     # Validate resources
     valid = validateResources(resources)
 
+    print("valid")
+    print(valid)
+
     # Append valid resources to session attributes
     sessionAttributesToAppend = {'resources': valid}
 
@@ -114,10 +117,10 @@ def addResourcesToProject(event):
 
     # Set the response message
     validString = listResponseBuilder(valid)
-    if valid:
-        message = f"I have added {validString} to the project, you can deploy your project with: Deploy Project or add some other resources"
-    elif "pipeline" in resources and "lambda" not in resources:
+    if "pipeline" in resources and "lambda" not in resources:
         message = f"Adding a pipeline without a lambda is not supported."
+    elif valid:
+        message = f"I have added {validString} to the project, you can deploy your project with: Deploy Project or add some other resources"
     else:
         message = f"I didn't understand. Please restate your command."
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
