@@ -19,7 +19,10 @@ class TemplateBuilder:
     def addResource(self, type):
         resource = table.get_item(Key={'Id': type})
         item = resource["Item"]["json"]
-        self.__tempBase['Resources'].update(item)
+        itemDict = json.loads(item)
+        print("template")
+        self.__tempBase['Resources'].update(itemDict)
+        print(self.__tempBase)
 
         # Print json for debug
     def printJSON(self):
