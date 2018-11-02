@@ -39,18 +39,18 @@ def buildLexResponse(error, message, sessionAttributesToAppend, event):
             "message": {
                 "contentType": "PlainText",
                 "content": message
-                },
-            }
+            },
         }
+    }
 
 
 # Create a list of allowed resources
 def getAllowedResources():
     allowedresources = []
     response = lexBotClient.get_slot_type(
-                                            name='Resources',
-                                            version='$LATEST'
-                                            )
+        name='Resources',
+        version='$LATEST'
+    )
     for value in response['enumerationValues']:
         allowedresources.append(value['value'])
     return allowedresources
@@ -70,9 +70,10 @@ def createProject(event):
 # Create list of valid resources
 def validateResources(resourcesToValidate):
     valid = []
+    print(resourcesToValidate)
     allowedResources = getAllowedResources()
-    for resourceSlot in resourcesToValidate:
-        resource = resourcesToValidate[resourceSlot]
+    print(allowedResources)
+    for resource in resourcesToValidate:
         if resource in allowedResources:
             valid.append(resource)
     return valid
@@ -92,36 +93,32 @@ def listResponseBuilder(list):
 
 
 def addResourcesToProject(event):
-    resources = event['currentIntent']['slots']
+    resources = list(event['currentIntent']['slots'].values())
     sessionAttributes = event['sessionAttributes']
     projectName = sessionAttributes['projectName']
 
     # If resources already exist, add them all together
-    if(hasattr(sessionAttributes, 'resources')):
-        resources.extend(sessionAttributes['resources'])
+    if ("resources" in sessionAttributes):
+        resources.extend([sessionAttributes['resources']])
 
     # Validate resources
     valid = validateResources(resources)
+    sessionAttributesToAppend = {}
 
     print("valid")
     print(valid)
 
-    # Append valid resources to session attributes
-    sessionAttributesToAppend = {'resources': valid}
-
-    # Add resources to template
-    for resource in valid:
-        t.addResource(resource)
-
-    # Add project to projects table
-    projTable.put_item(Item={"ProjectName": projectName,
-                             "resources": list(resources.values())})
-
     # Set the response message
     validString = listResponseBuilder(valid)
-    if "pipeline" in resources and "lambda" not in resources:
+    if "pipeline" in valid and "lambda" not in valid:
         message = f"Adding a pipeline without a lambda is not supported."
     elif valid:
+        # Append valid resources to session attributes
+        sessionAttributesToAppend = {'resources': ''.join(valid)}
+
+        # Add resources to template
+        for resource in valid:
+            t.addResource(resource)
         message = f"I have added {validString} to the project, you can deploy your project with: Deploy Project or add some other resources"
     else:
         message = f"I didn't understand. Please restate your command."
@@ -131,6 +128,11 @@ def addResourcesToProject(event):
 # Deploy a created project by launching the stack with cloudformation
 def deployProject(event):
     projectName = event['sessionAttributes']['projectName']
+
+    # Add project to projects table
+    projTable.put_item(Item={"ProjectName": projectName,
+                             "resources": t.getTemplate()})
+
     createStackFromTemplateBody(projectName, t.getTemplate())
     return buildLexResponse(0, f"Deployed {projectName}", {}, event)
 
