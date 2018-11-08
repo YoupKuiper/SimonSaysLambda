@@ -52,24 +52,6 @@
       ]
     }
   },
-  "YoupTestStackAPIGateway": {
-    "Type": "AWS::ApiGateway::RestApi",
-    "Properties": {
-      "Name": {
-        "Fn::Join": [
-          "",
-          [
-            {
-              "Ref": "ProjectName"
-            },
-            "APIGateway"
-          ]
-        ]
-      },
-      "Description": "API Gateway to support NodeJS Lambda that returns HTML",
-      "FailOnWarnings": true
-    }
-  },
   "LambdaPermission": {
     "Type": "AWS::Lambda::Permission",
     "Properties": {
@@ -101,6 +83,25 @@
           ]
         ]
       }
+    }
+  },
+  "YoupTestStackAPIGateway": {
+    "Type": "AWS::ApiGateway::RestApi",
+    "Properties": {
+      "Name": {
+        "Fn::Join": [
+          "",
+          [
+            {
+              "Ref": "ProjectName"
+            },
+            "APIGateway"
+          ]
+        ]
+      },
+      "Parameters": {"EndpointConfiguration": "EDGE"},
+      "Description": "API Gateway to support NodeJS Lambda that returns HTML",
+      "FailOnWarnings": true
     }
   },
   "ApiGatewayCloudWatchLogsRole": {
