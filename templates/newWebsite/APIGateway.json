@@ -1,26 +1,222 @@
 {
   "Parameters": {
     "ProjectName": {
-      "Type": "String",
-      "Default": "TestProject"
+      "Default": "testproject",
+      "Type": "String"
     }
   },
   "Resources": {
-    "LambdaFunction": {
-      "Type": "AWS::Lambda::Function",
+    "APIGateway": {
       "Properties": {
-        "Description": "Simple Lambda function",
-        "Code": {
-          "ZipFile" :
-          "import json\n
-          def lambda_handler(event, context):\n
-          \tmessage = 'Hello {}!'.format(event[\"queryStringParameters\"][\"name\"])\n
-          \treturn {\n
-          \t\t'statusCode': 200,\n
-          \t\t'body': json.dumps(message, sort_keys=True, indent=4, separators=(',', ': '))\n
-          \t}
-          "
+        "Description": "API Gateway to support NodeJS Lambda",
+        "FailOnWarnings": true,
+        "Name": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "ProjectName"
+              },
+              "-Gateway"
+            ]
+          ]
         },
+        "Parameters": {
+          "EndpointConfiguration": "REGIONAL"
+        }
+      },
+      "Type": "AWS::ApiGateway::RestApi"
+    },
+    "APIGatewayAccount": {
+      "Properties": {
+        "CloudWatchRoleArn": {
+          "Fn::GetAtt": [
+            "APIGatewayCloudWatchLogsRole",
+            "Arn"
+          ]
+        }
+      },
+      "Type": "AWS::ApiGateway::Account"
+    },
+    "APIGatewayCloudWatchLogsRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "apigateway.amazonaws.com"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:DescribeLogGroups",
+                    "logs:DescribeLogStreams",
+                    "logs:PutLogEvents",
+                    "logs:GetLogEvents",
+                    "logs:FilterLogEvents"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*"
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "PolicyName": "ApiGatewayLogsPolicy"
+          }
+        ]
+      },
+      "Type": "AWS::IAM::Role"
+    },
+    "APIGatewayDeployment": {
+      "DependsOn": "APIGatewayMethod",
+      "Properties": {
+        "Description": "Deployment",
+        "RestApiId": {
+          "Ref": "APIGateway"
+        },
+        "StageName": "LATEST"
+      },
+      "Type": "AWS::ApiGateway::Deployment"
+    },
+    "APIGatewayDomain": {
+      "Type": "AWS::ApiGateway::DomainName",
+      "Properties": {
+        "RegionalCertificateArn": "arn:aws:acm:eu-west-1:835483671006:certificate/314f7b22-5b16-4e49-8966-6405464721b3",
+        "DomainName": {
+          "Fn::Join" : [ "", [
+             {"Ref" : "ProjectName"}, ".",
+             "api", ".",
+             "mirademo", ".",
+             "com"
+          ] ]
+        },
+        "EndpointConfiguration": {
+          "Types": ["REGIONAL"]
+        }
+      }
+    },
+    "APIGatewayDomainMapping": {
+      "DependsOn": "APIGatewayDeployment",
+      "Type": "AWS::ApiGateway::BasePathMapping",
+      "Properties": {
+        "BasePath": "",
+        "DomainName": {
+          "Ref": "APIGatewayDomain"
+        },
+        "RestApiId": {
+          "Ref": "APIGateway"
+        },
+        "Stage" : "LATEST"
+      }
+    },
+    "APIGatewayMethod": {
+      "DependsOn": "LambdaPermission",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "GET",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "PassthroughBehavior": "WHEN_NO_MATCH",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:aws:apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "LambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": [
+          {
+            "StatusCode": "200"
+          }
+        ],
+        "ResourceId": {
+          "Fn::GetAtt": [
+            "APIGateway",
+            "RootResourceId"
+          ]
+        },
+        "RestApiId": {
+          "Ref": "APIGateway"
+        }
+      },
+      "Type": "AWS::ApiGateway::Method"
+    },
+    "APITesterSG": {
+      "Properties": {
+        "GroupDescription": "SG for Lambda function",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "0",
+            "IpProtocol": "tcp",
+            "ToPort": "65535"
+          }
+        ],
+        "VpcId": {
+          "Fn::ImportValue": "Demo-MyVPC"
+        }
+      },
+      "Type": "AWS::EC2::SecurityGroup"
+    },
+    "LambdaExecutionRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+        ]
+      },
+      "Type": "AWS::IAM::Role"
+    },
+    "LambdaFunction": {
+      "Properties": {
+        "Code": {
+          "ZipFile": "import json\ndef lambda_handler(event, context): \n\tmessage = {\"person\": {\"name\": \"sven\"}}\n\treturn {\n\t\t 'statusCode': 200, \n\t\t 'body': json.dumps(message, sort_keys = True, indent = 4, separators = (',', ': '))\n\t}"
+        },
+        "Description": "Simple Lambda function",
         "FunctionName": {
           "Fn::Join": [
             "",
@@ -46,90 +242,16 @@
               "Ref": "APITesterSG"
             }
           ],
-          "SubnetIds": [{
-            "Fn::ImportValue": "Demo-privateSubnet01"
-          }]
-        }
-      }
-    },
-    "APIGateway": {
-      "Type": "AWS::ApiGateway::RestApi",
-      "Properties": {
-        "Name": {
-          "Fn::Join": [
-            "",
-            [
-              {
-                "Ref": "ProjectName"
-              },
-              "-Gateway"
-            ]
-          ]
-        },
-        "Parameters": {
-          "EndpointConfiguration": "REGIONAL"
-        },
-        "Description": "API Gateway to support NodeJS Lambda",
-        "FailOnWarnings": true
-      }
-    },
-    "APIGatewayCloudWatchLogsRole": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
+          "SubnetIds": [
             {
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "apigateway.amazonaws.com"
-                ]
-              },
-              "Action": [
-                "sts:AssumeRole"
-              ]
+              "Fn::ImportValue": "Demo-privateSubnet01"
             }
-          ]
-        },
-        "Policies": [
-          {
-            "PolicyName": "ApiGatewayLogsPolicy",
-            "PolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "logs:CreateLogGroup",
-                    "logs:CreateLogStream",
-                    "logs:DescribeLogGroups",
-                    "logs:DescribeLogStreams",
-                    "logs:PutLogEvents",
-                    "logs:GetLogEvents",
-                    "logs:FilterLogEvents"
-                  ],
-                  "Resource": "*"
-                }
-              ]
-            }
-          }
-        ]
-      }
-    },
-    "APIGatewayAccount": {
-      "Type": "AWS::ApiGateway::Account",
-      "Properties": {
-        "CloudWatchRoleArn": {
-          "Fn::GetAtt": [
-            "APIGatewayCloudWatchLogsRole",
-            "Arn"
           ]
         }
-      }
+      },
+      "Type": "AWS::Lambda::Function"
     },
     "LambdaPermission": {
-      "Type": "AWS::Lambda::Permission",
       "Properties": {
         "Action": "lambda:invokeFunction",
         "FunctionName": {
@@ -159,128 +281,44 @@
             ]
           ]
         }
+      },
+      "Type": "AWS::Lambda::Permission"
+    },
+    "DNSForAPI" : {
+      "Type" : "AWS::Route53::RecordSet",
+      "Properties" : {
+         "HostedZoneName" : "mirademo.com.",
+         "Comment" : "DNS name for my instance.",
+         "Name" : {
+            "Fn::Join" : [ "", [
+               {"Ref" : "ProjectName"}, ".",
+               "api", ".",
+               "mirademo", ".",
+               "com" ,"."
+            ] ]
+         },
+         "Type" : "A",
+         "AliasTarget" : {
+           "DNSName": {
+             "Fn::GetAtt": [
+               "APIGatewayDomain",
+               "RegionalDomainName"
+             ]
+           },
+           "HostedZoneId": {
+             "Fn::GetAtt": [
+               "APIGatewayDomain",
+               "RegionalHostedZoneId"
+             ]
+           }
+         }
       }
     },
-    "APIGatewayStage": {
-      "DependsOn": [
-        "APIGatewayAccount"
-      ],
-      "Type": "AWS::ApiGateway::Stage",
-      "Properties": {
-        "StageName": "LATEST",
-        "Description": "Stage for demo",
-        "RestApiId": {
-          "Ref": "APIGateway"
-        },
-        "DeploymentId": {
-          "Ref": "APIGatewayDeployment"
-        },
-        "MethodSettings": [
-          {
-            "ResourcePath": "/",
-            "HttpMethod": "GET",
-            "MetricsEnabled": "true",
-            "DataTraceEnabled": "true"
-          }
-        ]
-      }
-    },
-    "APIGatewayMethod": {
-      "DependsOn": "LambdaPermission",
-      "Type": "AWS::ApiGateway::Method",
-      "Properties": {
-        "HttpMethod": "GET",
-        "ResourceId": {
-          "Fn::GetAtt": [
-            "APIGateway",
-            "RootResourceId"
-          ]
-        },
-        "RestApiId": {
-          "Ref": "APIGateway"
-        },
-        "AuthorizationType": "NONE",
-        "Integration": {
-          "Type": "AWS_PROXY",
-          "PassthroughBehavior": "WHEN_NO_MATCH",
-          "IntegrationHttpMethod": "POST",
-          "Uri": {
-            "Fn::Join": [
-              "",
-              [
-                "arn:aws:apigateway:",
-                {
-                  "Ref": "AWS::Region"
-                },
-                ":lambda:path/2015-03-31/functions/",
-                {
-                  "Fn::GetAtt": [
-                    "LambdaFunction",
-                    "Arn"
-                  ]
-                },
-                "/invocations"
-              ]
-            ]
-          },
-        },
-        "MethodResponses": [
-          {
-            "StatusCode": "200"
-          }
-        ]
-      }
-    },
-    "APIGatewayDeployment": {
-      "DependsOn": "APIGatewayMethod",
-      "Type": "AWS::ApiGateway::Deployment",
-      "Properties": {
-        "RestApiId": {
-          "Ref": "APIGateway"
-        },
-        "Description": "Deployment",
-        "StageName": "demo"
-      }
-    },
-    "LambdaExecutionRole": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "lambda.amazonaws.com"
-                ]
-              },
-              "Action": [
-                "sts:AssumeRole"
-              ]
-            }
-          ]
-        },
-        "ManagedPolicyArns": [
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-        ]
-      }
-    },
-    "APITesterSG": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "Properties": {
-        "VpcId": {
-          "Fn::ImportValue": "Demo-MyVPC"
-        },
-        "GroupDescription": "SG for Lambda function",
-        "SecurityGroupEgress": [
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "0",
-            "ToPort": "65535",
-            "CidrIp": "0.0.0.0/0"
-          }
-        ],
+  },
+  "Outputs": {
+    "DomainName": {
+      "Value": {
+        "Ref": "APIGatewayDomain"
       }
     }
   }
