@@ -510,6 +510,109 @@
           }
         ]
       }
+    },
+    "LambdaCodeCommitRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "S3Access",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Sid": "AllowLogging",
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Sid": "SourceBucketReadAccess",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:ListBucket",
+                    "s3:GetObject"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:s3:::${CodeBucket}"
+                    },
+                    {
+                      "Fn::Sub": "arn:aws:s3:::${CodeBucket}/*"
+                    }
+                  ]
+                },
+                {
+                  "Sid": "DestBucketWriteAccess",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:ListBucket",
+                    "s3:GetObject",
+                    "s3:PutObject",
+                    "s3:PutObjectAcl",
+                    "s3:PutObjectVersionAcl",
+                    "s3:DeleteObject",
+                    "s3:DeleteObjectVersion",
+                    "s3:CopyObject"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:s3:::${WebsiteBucket}"
+                    },
+                    {
+                      "Fn::Sub": "arn:aws:s3:::${WebsiteBucket}/*"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+    },
+    "CommitToRepoLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "DependsOn": [
+        "LambdaCodeCommitRole"
+      ],
+      "Properties": {
+        "Description": "Does a commit to a CodeCommit Repository",
+        "Handler": "index.handler",
+        "Runtime": "python3.6",
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaCodeCommitRole",
+            "Arn"
+          ]
+        },
+        "Timeout": 120,
+        "Code": {
+          "ZipFile": ""
+        }
+      }
+    },
+    "CallCommitToRepoLambdaFunction": {
+      "Type": "Custom::S3Objects",
+      "Properties": {
+        "RepositoryName": { "Fn::GetAtt": ["CodeCommitRepository", "Name"]},
+        "BucketName": "awscodepipelinetestbucketcf",
+        "ContentZipName": "test.zip",
+      }
     }
   }
 }
