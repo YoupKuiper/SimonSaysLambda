@@ -78,7 +78,7 @@
     "S3CopyRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "Path": "/wildrydes/",
+        "Path": "/",
         "AssumeRolePolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
@@ -127,13 +127,10 @@
                   "Sid": "DestBucketWriteAccess",
                   "Effect": "Allow",
                   "Action": [
-                    "s3:ListBucket",
                     "s3:GetObject",
                     "s3:PutObject",
                     "s3:PutObjectAcl",
                     "s3:PutObjectVersionAcl",
-                    "s3:DeleteObject",
-                    "s3:DeleteObjectVersion",
                     "s3:CopyObject"
                   ],
                   "Resource": [
@@ -497,9 +494,7 @@
     },
     "LambdaFunction": {
       "Properties": {
-        "Code": {
-          "ZipFile": "import json\ndef lambda_handler(event, context): \n\tmessage = {\"person\": {\"name\": \"sven\"}}\n\treturn {\n\t\t'statusCode': 200,\n\t\t'headers': {\n\t\t\t'Access-Control-Allow-Origin': '*',\n\t\t\t'Access-Control-Allow-Origin' : '*',\n\t\t\t'Allow' : 'GET, OPTIONS, POST',\n\t\t\t'Access-Control-Allow-Methods' : 'GET, OPTIONS, POST',\n\t\t\t'Access-Control-Allow-Headers' : '*'\n\t\t}, \n\t\t'body': json.dumps(message, sort_keys = True, indent = 4, separators = (',', ': '))\n\t}"
-        },
+        "Code": "./",
         "Description": "Simple Lambda function",
         "FunctionName": {
           "Fn::Join": [
@@ -528,7 +523,10 @@
           ],
           "SubnetIds": [
             {
-              "Fn::ImportValue": "Demo-privateSubnet01"
+              "Fn::ImportValue": "Demo-publicSubnet01"
+            },
+            {
+              "Fn::ImportValue": "Demo-publicSubnet02"
             }
           ]
         }
