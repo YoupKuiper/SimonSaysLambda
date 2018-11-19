@@ -551,10 +551,10 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:aws:s3:::${CodeBucket}"
+                      "Fn::Sub": "arn:aws:s3:::*"
                     },
                     {
-                      "Fn::Sub": "arn:aws:s3:::${CodeBucket}/*"
+                      "Fn::Sub": "arn:aws:s3:::*"
                     }
                   ]
                 },
@@ -573,10 +573,10 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:aws:s3:::${WebsiteBucket}"
+                      "Fn::Sub": "arn:aws:s3:::*"
                     },
                     {
-                      "Fn::Sub": "arn:aws:s3:::${WebsiteBucket}/*"
+                      "Fn::Sub": "arn:aws:s3:::*"
                     }
                   ]
                 }
@@ -584,7 +584,7 @@
             }
           }
         ]
-    },
+    }},
     "CommitToRepoLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "DependsOn": [
@@ -592,7 +592,7 @@
       ],
       "Properties": {
         "Description": "Does a commit to a CodeCommit Repository",
-        "Handler": "index.handler",
+        "Handler": "index.lambda_handler",
         "Runtime": "python3.6",
         "Role": {
           "Fn::GetAtt": [
@@ -610,9 +610,10 @@
     "CallCommitToRepoLambdaFunction": {
       "Type": "Custom::S3Objects",
       "Properties": {
+        "ServiceToken": {"Fn::GetAtt":["CommitToRepoLambdaFunction", "Arn"]},
         "RepositoryName": { "Fn::GetAtt": ["CodeCommitRepository", "Name"]},
         "BucketName": "awscodepipelinetestbucketcf",
-        "ContentZipName": "test.zip",
+        "ContentZipName": "test.zip"
       }
     }
   }
