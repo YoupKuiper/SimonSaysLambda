@@ -528,58 +528,45 @@
         },
         "Policies": [
           {
-            "PolicyName": "S3Access",
+            "PolicyName": "CodeCommit_PutFile_Access",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": "codecommit:PutFile",
+                    "Resource": "*"
+                  }
+              ]
+            }
+          },
+          {
+            "PolicyName": "Lambda_Logs_Policy",
             "PolicyDocument": {
               "Version": "2012-10-17",
               "Statement": [
                 {
-                  "Sid": "AllowLogging",
                   "Effect": "Allow",
                   "Action": [
-                    "logs:CreateLogGroup",
-                    "logs:CreateLogStream",
-                    "logs:PutLogEvents"
+                      "logs:CreateLogGroup",
+                      "logs:CreateLogStream",
+                      "logs:PutLogEvents"
                   ],
-                  "Resource": "*"
-                },
-                {
-                  "Sid": "SourceBucketReadAccess",
-                  "Effect": "Allow",
-                  "Action": [
-                    "s3:ListBucket",
-                    "s3:GetObject"
-                  ],
-                  "Resource": [
-                    {
-                      "Fn::Sub": "arn:aws:s3:::${CodeBucket}"
-                    },
-                    {
-                      "Fn::Sub": "arn:aws:s3:::${CodeBucket}/*"
-                    }
-                  ]
-                },
-                {
-                  "Sid": "DestBucketWriteAccess",
-                  "Effect": "Allow",
-                  "Action": [
-                    "s3:ListBucket",
-                    "s3:GetObject",
-                    "s3:PutObject",
-                    "s3:PutObjectAcl",
-                    "s3:PutObjectVersionAcl",
-                    "s3:DeleteObject",
-                    "s3:DeleteObjectVersion",
-                    "s3:CopyObject"
-                  ],
-                  "Resource": [
-                    {
-                      "Fn::Sub": "arn:aws:s3:::${WebsiteBucket}"
-                    },
-                    {
-                      "Fn::Sub": "arn:aws:s3:::${WebsiteBucket}/*"
-                    }
-                  ]
+                  "Resource": "arn:aws:logs:*:*:*"
                 }
+              ]
+            }
+          },
+          {
+            "PolicyName": "S3_GetObject_Access",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                  {
+                      "Effect": "Allow",
+                      "Action": "s3:GetObject",
+                      "Resource": "*"
+                  }
               ]
             }
           }
