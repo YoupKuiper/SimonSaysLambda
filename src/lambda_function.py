@@ -92,10 +92,15 @@ def listResponseBuilder(list):
             listresponse = listresponse + ", " + resource
     return listresponse
 
-
 def addResourcesToProject(event):
     resources = list(event['currentIntent']['slots'].values())
     sessionAttributes = event['sessionAttributes']
+
+    # If there is no project defined, return an error message
+    if sessionAttributes['projectName'] is None:
+        message = "Please define a project before adding resources"
+        return buildLexResponse(0, message, None, event)
+
     projectName = sessionAttributes['projectName']
 
     # If resources already exist, add them all together
@@ -122,7 +127,7 @@ def addResourcesToProject(event):
             t.addResource(resource)
         message = f"I have added {validString} to the project, you can deploy your project with: Deploy Project or add some other resources"
     else:
-        message = f"I didn't understand. Please restate your command."
+        message = "I didn't understand. Please restate your command."
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
 
 
