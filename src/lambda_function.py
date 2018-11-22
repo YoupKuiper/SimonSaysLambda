@@ -97,14 +97,14 @@ def addResourcesToProject(event):
     sessionAttributes = event['sessionAttributes']
 
     # If there is no project defined, return an error message
-    if 'projectName' not in sessionAttributes:
+    if sessionAttributes['projectName'] is None:
         message = "Please define a project before adding resources"
         return buildLexResponse(0, message, None, event)
 
     projectName = sessionAttributes['projectName']
 
     # If resources already exist, add them all together
-    if "resources" in sessionAttributes:
+    if ("resources" in sessionAttributes):
         resources.extend([sessionAttributes['resources']])
 
     # Validate resources
@@ -157,9 +157,14 @@ def createStackFromURL(stackName, templateURL):
 
 
 def createStackFromTemplateBody(stackName, templateBody):
-    response = cloudFormationClient.create_stack(
-        StackName=stackName,
-        TemplateBody=str(templateBody))
+    try:
+        response = cloudFormationClient.create_stack(
+            StackName=stackName,
+            TemplateBody=str(templateBody))
+    except Exception, e:
+        return buildLexResponse(0, "stack already exists", {}, event)
+
+
 
     print(response)
 
