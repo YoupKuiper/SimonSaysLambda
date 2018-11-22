@@ -139,8 +139,7 @@ def deployProject(event):
     projTable.put_item(Item={"ProjectName": projectName,
                              "resources": t.getTemplate()})
 
-    createStackFromTemplateBody(projectName, t.getTemplate())
-    return buildLexResponse(0, f"Deployed {projectName}", {}, event)
+    return createStackFromTemplateBody(projectName, t.getTemplate(), projectName)
 
 
 def appendSessionAttributes(attributes, attributesToAppend):
@@ -156,15 +155,13 @@ def createStackFromURL(stackName, templateURL):
     print(response)
 
 
-def createStackFromTemplateBody(stackName, templateBody):
+def createStackFromTemplateBody(stackName, templateBody, projectName):
     try:
         response = cloudFormationClient.create_stack(
             StackName=stackName,
             TemplateBody=str(templateBody))
-    except Exception, e:
-        return buildLexResponse(0, "stack already exists", {}, event)
-
-
+    except Exception as e:
+        return buildLexResponse(0, "Stack already exists", {}, event)
 
     print(response)
 
@@ -174,6 +171,7 @@ def createStackFromTemplateBody(stackName, templateBody):
         time.sleep(10)
         response = cloudFormationClient.describe_stacks(StackName=stackName)
 
+    return buildLexResponse(0, f"Project {projectName} has been created", {}, event)
 
 
 if os.environ['DEBUG'] == "True":
