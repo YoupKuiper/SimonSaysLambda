@@ -97,14 +97,14 @@ def addResourcesToProject(event):
     sessionAttributes = event['sessionAttributes']
 
     # If there is no project defined, return an error message
-    if sessionAttributes['projectName'] is None:
+    if 'projectName' not in sessionAttributes:
         message = "Please define a project before adding resources"
         return buildLexResponse(0, message, None, event)
 
     projectName = sessionAttributes['projectName']
 
     # If resources already exist, add them all together
-    if ("resources" in sessionAttributes):
+    if "resources" in sessionAttributes:
         resources.extend([sessionAttributes['resources']])
 
     # Validate resources
