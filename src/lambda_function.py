@@ -3,6 +3,7 @@ from TemplateBuilder import TemplateBuilder
 import os
 import sys
 import json
+import time
 from dbhandler import dbhandler
 
 cloudFormationClient = boto3.client('cloudformation')
@@ -156,6 +157,13 @@ def createStackFromTemplateBody(stackName, templateBody):
         TemplateBody=str(templateBody))
 
     print(response)
+
+    response = cloudFormationClient.describe_stacks(StackName=stackName)
+
+    while response['Stacks'][0]['StackStatus'] == "CREATE_IN_PROGRESS":
+        time.sleep(10)
+        response = cloudFormationClient.describe_stacks(StackName=stackName)
+
 
 
 if os.environ['DEBUG'] == "True":
