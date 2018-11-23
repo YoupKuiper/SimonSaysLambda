@@ -92,10 +92,15 @@ def listResponseBuilder(list):
             listresponse = listresponse + ", " + resource
     return listresponse
 
-
 def addResourcesToProject(event):
     resources = list(event['currentIntent']['slots'].values())
     sessionAttributes = event['sessionAttributes']
+
+    # If there is no project defined, return an error message
+    if sessionAttributes['projectName'] is None:
+        message = "Please define a project before adding resources"
+        return buildLexResponse(0, message, None, event)
+
     projectName = sessionAttributes['projectName']
 
     # If resources already exist, add them all together
@@ -122,7 +127,7 @@ def addResourcesToProject(event):
             t.addResource(resource)
         message = f"I have added {validString} to the project, you can deploy your project with: Deploy Project or add some other resources"
     else:
-        message = f"I didn't understand. Please restate your command."
+        message = "I didn't understand. Please restate your command."
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
 
 
@@ -134,8 +139,7 @@ def deployProject(event):
     projTable.put_item(Item={"ProjectName": projectName,
                              "resources": t.getTemplate()})
 
-    createStackFromTemplateBody(projectName, t.getTemplate())
-    return buildLexResponse(0, f"Deployed {projectName}", {}, event)
+    return createStackFromTemplateBody(projectName, t.getTemplate(), projectName)
 
 
 def appendSessionAttributes(attributes, attributesToAppend):
@@ -151,10 +155,13 @@ def createStackFromURL(stackName, templateURL):
     print(response)
 
 
-def createStackFromTemplateBody(stackName, templateBody):
-    response = cloudFormationClient.create_stack(
-        StackName=stackName,
-        TemplateBody=str(templateBody))
+def createStackFromTemplateBody(stackName, templateBody, projectName):
+    try:
+        response = cloudFormationClient.create_stack(
+            StackName=stackName,
+            TemplateBody=str(templateBody))
+    except Exception as e:
+        return buildLexResponse(0, "Stack already exists", {}, event)
 
     print(response)
 
@@ -164,6 +171,7 @@ def createStackFromTemplateBody(stackName, templateBody):
         time.sleep(10)
         response = cloudFormationClient.describe_stacks(StackName=stackName)
 
+    return buildLexResponse(0, f"Project {projectName} has been created", {}, event)
 
 
 if os.environ['DEBUG'] == "True":
