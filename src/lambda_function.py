@@ -180,9 +180,9 @@ def createStackFromTemplateBody(stackName, templateBody, projectName, event):
 
 # Function to gradually start a conversation
 def greetUser(event):
-    message = "Hi! I am the SimonSays bot. I can help you with the proces of \
+    message = "Hi! I am the SimonSays bot. I can help you with the process of\
     creating AWS projects and deploying them. Create a project using the\
-    createproject command or say help for more information!"
+    create project command or say help for more information!"
 
     return buildLexResponse(0, message, {}, event)
 
@@ -197,7 +197,7 @@ def HelpUser(event):
     elif helpType == 'deployment':
         message = "deploy help"
     else:
-        message = "I'm sorry, I cannot help you with that. I can only help you with resources, projects and deployment. Please select one."
+        message = "I'm sorry, I cannot help you with {}. I can only help you with resources, projects and deployment. Please select one.".format(helpType)
         return elicit_slot(event['sessionAttributes'], event['currentIntent']['name'], event['currentIntent']['slots'], "Help", message)
 
     return buildLexResponse(0, message, {}, event)
