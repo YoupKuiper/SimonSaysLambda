@@ -45,9 +45,9 @@ def buildLexResponse(error, message, sessionAttributesToAppend, event):
             "message": {
                 "contentType": "PlainText",
                 "content": message
-            },
+                },
+            }
         }
-    }
 
 
 # Create a list of allowed resources
@@ -56,7 +56,7 @@ def getAllowedResources():
     response = lexBotClient.get_slot_type(
         name='Resources',
         version='$LATEST'
-    )
+        )
     for value in response['enumerationValues']:
         allowedresources.append(value['value'])
     return allowedresources
@@ -66,8 +66,11 @@ def getAllowedResources():
 def createProject(event):
     t.clear()
     projectName = event['currentIntent']['slots']['ProjectName']
-    message = f"Project {projectName} has been created, please define the resources you want to have in your project"
-    sessionAttributesToAppend = {"projectName": projectName}
+    projectNameInput = event['inputTranscript']
+    if (' ' in projectNameInput) is True:
+        projectNameInput = projectNameInput.replace(" ", "-")
+    message = f"Project {projectNameInput} has been created, please define the resources you want to have in your project"
+    sessionAttributesToAppend = {"projectName": projectNameInput}
     projTable.put_item(Item={"ProjectName": projectName, "resources": []})
 
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
@@ -96,6 +99,7 @@ def listResponseBuilder(list):
         else:
             listresponse = listresponse + ", " + resource
     return listresponse
+
 
 def addResourcesToProject(event):
     resources = list(event['currentIntent']['slots'].values())
@@ -179,14 +183,18 @@ def createStackFromTemplateBody(stackName, templateBody, projectName, event):
     return buildLexResponse(0, f"Project {projectName} has been created", {}, event)
 
 # Function to gradually start a conversation
+
+
 def greetUser(event):
-    message = "Hi! I am the SimonSays bot. I can help you with the proces of \
+    message = "Hi! I am the SimonSays bot. I can help you with the process of\
     creating AWS projects and deploying them. Create a project using the\
-    createproject command or say help for more information!"
+    create project command or say help for more information!"
 
     return buildLexResponse(0, message, {}, event)
 
 # Function to help users during the process
+
+
 def HelpUser(event):
     helpType = event['currentIntent']['slots']['Help']
 
@@ -197,10 +205,12 @@ def HelpUser(event):
     elif helpType == 'deployment':
         message = "deploy help"
     else:
-        message = "I'm sorry, I cannot help you with that. I can only help you with resources, projects and deployment. Please select one."
+        message = "I'm sorry, I cannot help you with {}. I can only help you with resources, projects and deployment. Please select one.".format(
+            helpType)
         return elicit_slot(event['sessionAttributes'], event['currentIntent']['name'], event['currentIntent']['slots'], "Help", message)
 
     return buildLexResponse(0, message, {}, event)
+
 
 def elicit_slot(session_attributes, intent_name, slots, slot_to_elicit, message):
     return {
@@ -211,11 +221,12 @@ def elicit_slot(session_attributes, intent_name, slots, slot_to_elicit, message)
             'slots': slots,
             'slotToElicit': slot_to_elicit,
             'message': {
-                'contentType':'PlainText',
+                'contentType': 'PlainText',
                 'content': message
-            },
+                },
+            }
         }
-    }
+
 
 if os.environ['DEBUG'] == "True":
     jsonFile = open(sys.argv[1], "r")
