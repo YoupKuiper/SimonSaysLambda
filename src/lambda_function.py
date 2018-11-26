@@ -25,6 +25,8 @@ def lambda_handler(event, context):
         return deployProject(event)
     elif currentIntent == "GreetUser":
         return greetUser(event)
+    elif currentIntent == "HelpFunction":
+        return HelpUser(event)
     else:
         return buildLexResponse(1, "Error, unrecognized intent", None, None)
 
@@ -181,6 +183,19 @@ def greetUser(event):
     message = "Hi! I am the SimonSays bot. I can help you with the proces of \
     creating AWS projects and deploying them. Create a project using the\
     createproject command or say help for more information!"
+
+    return buildLexResponse(0, message, {}, event)
+
+# Function to help users during the process
+def HelpUser(event):
+    helpType = event['currentIntent']['slots']['Help']
+
+    if helpType == 'create':
+        message = "create help"
+    elif helpType == 'resources':
+        message = "create help"
+    elif helpType == 'deploy':
+        message = "deploy help"
 
     return buildLexResponse(0, message, {}, event)
 
