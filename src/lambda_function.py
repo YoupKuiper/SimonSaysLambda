@@ -190,15 +190,30 @@ def greetUser(event):
 def HelpUser(event):
     helpType = event['currentIntent']['slots']['Help']
 
-    if helpType == 'create':
+    if helpType == 'projects':
         message = "create help"
     elif helpType == 'resources':
         message = "create help"
-    elif helpType == 'deploy':
+    elif helpType == 'deployment':
         message = "deploy help"
+    else:
+        message = "I'm sorry, I cannot help you with that"
+        return elicit_slot(event['sessionAttributes'],
+        event['currentIntent']['name'], helpType, message)
 
     return buildLexResponse(0, message, {}, event)
 
+def elicit_slot(session_attributes, intent_name, slots, slot_to_elicit, message):
+    return {
+        'sessionAttributes': session_attributes,
+        'dialogAction': {
+            'type': 'ElicitSlot',
+            'intentName': intent_name,
+            'slots': slots,
+            'slotToElicit': slot_to_elicit,
+            'message': message
+        }
+    }
 
 if os.environ['DEBUG'] == "True":
     jsonFile = open(sys.argv[1], "r")
