@@ -144,7 +144,7 @@ def deployProject(event):
     projTable.put_item(Item={"ProjectName": projectName,
                              "resources": t.getTemplate()})
 
-    return createStackFromTemplateBody(projectName, t.getTemplate(), projectName)
+    return createStackFromTemplateBody(projectName, t.getTemplate(), projectName, event)
 
 
 def appendSessionAttributes(attributes, attributesToAppend):
@@ -160,7 +160,7 @@ def createStackFromURL(stackName, templateURL):
     print(response)
 
 
-def createStackFromTemplateBody(stackName, templateBody, projectName):
+def createStackFromTemplateBody(stackName, templateBody, projectName, event):
     try:
         response = cloudFormationClient.create_stack(
             StackName=stackName,
