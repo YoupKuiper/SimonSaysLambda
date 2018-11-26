@@ -193,12 +193,12 @@ def HelpUser(event):
     if helpType == 'projects':
         message = "create help"
     elif helpType == 'resources':
-        message = "create help"
+        message = "resources help"
     elif helpType == 'deployment':
         message = "deploy help"
     else:
-        message = "I'm sorry, I cannot help you with that"
-        return elicit_slot(event['sessionAttributes'], event['currentIntent']['name'], event['currentIntent']['slots'], "HelpTypes", message)
+        message = "I'm sorry, I cannot help you with that. I can only help you with resources, projects and deployment. Please select one."
+        return elicit_slot(event['sessionAttributes'], event['currentIntent']['name'], event['currentIntent']['slots'], "Help", message)
 
     return buildLexResponse(0, message, {}, event)
 
