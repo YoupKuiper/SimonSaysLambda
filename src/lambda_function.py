@@ -70,7 +70,7 @@ def createProject(event):
     if (' ' in projectNameInput) is True:
         projectNameInput = projectNameInput.replace(" ", "-")
     message = f"Project {projectNameInput} has been created, please define the resources you want to have in your project"
-    sessionAttributesToAppend = {"projectName": projectName}
+    sessionAttributesToAppend = {"projectName": projectNameInput}
     projTable.put_item(Item={"ProjectName": projectName, "resources": []})
 
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
