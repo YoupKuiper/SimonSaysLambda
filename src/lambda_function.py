@@ -198,7 +198,7 @@ def HelpUser(event):
         message = "deploy help"
     else:
         message = "I'm sorry, I cannot help you with that"
-        return elicit_slot(event['sessionAttributes'], event['currentIntent']['name'], event['currentIntent']['slots'], helpType, message)
+        return elicit_slot(event['sessionAttributes'], event['currentIntent']['name'], event['currentIntent']['slots'], "HelpTypes", message)
 
     return buildLexResponse(0, message, {}, event)
 
