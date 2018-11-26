@@ -13,6 +13,7 @@ t = TemplateBuilder()
 projTable = dbhandler.getDB("project")
 
 
+# Map intents to the right handler functions
 def lambda_handler(event, context):
     print(event)
     currentIntent = event['currentIntent']['name']
@@ -22,6 +23,8 @@ def lambda_handler(event, context):
         return addResourcesToProject(event)
     elif currentIntent == "DeployProject":
         return deployProject(event)
+    elif currentIntent == "GreetUser":
+        return greetUser(event)
     else:
         return buildLexResponse(1, "Error, unrecognized intent", None, None)
 
@@ -172,6 +175,14 @@ def createStackFromTemplateBody(stackName, templateBody, projectName):
         response = cloudFormationClient.describe_stacks(StackName=stackName)
 
     return buildLexResponse(0, f"Project {projectName} has been created", {}, event)
+
+# Function to gradually start a conversation
+def greetUser(event):
+    message = "Hi! I am the SimonSays bot. I can help you with the proces of \
+    creating AWS projects and deploying them. Create a project using the\
+    createproject command or say help for more information!"
+
+    return buildLexResponse(0, message, {}, event)
 
 
 if os.environ['DEBUG'] == "True":
