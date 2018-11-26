@@ -622,7 +622,51 @@
            "DNSName": "s3-website-eu-west-1.amazonaws.com",
            "HostedZoneId": "Z1BKCTXD74EZPE"
          }
-
+      }
+    },
+    "WebsiteDynamoDBTable": {
+      "Type" : "AWS::DynamoDB::Table",
+      "Properties" : {
+        "AttributeDefinitions" : [ {"AttributeName": "Key", "AttributeType": "S"} ],
+        "KeySchema" : [ {"AttributeName": "Key", "KeyType": "HASH"} ],
+        "ProvisionedThroughput" : {"ReadCapacityUnits": 5, "WriteCapacityUnits": 5},
+        "TableName" : {"Ref": "ProjectName"},
+      }
+    },
+    "WebsiteDynamoDBTable": {
+      "Type" : "AWS::DynamoDB::Table",
+      "Properties" : {
+        "AttributeDefinitions" : [ {"AttributeName": "Key", "AttributeType": "S"} ],
+        "KeySchema" : [ {"AttributeName": "Key", "KeyType": "HASH"} ],
+        "ProvisionedThroughput" : {"ReadCapacityUnits": 5, "WriteCapacityUnits": 5},
+        "TableName" : {"Fn::Join": ["",[{"Ref": "ProjectName"}, "Table"]]}
+      }
+    },
+    "TableContent": {
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "FillTableWithWebsiteContentFunction",
+            "Arn"
+          ]
+        },
+        "TableName": {"Fn::Join": ["", [{"Ref": "ProjectName"}, "Table"]]},
+        "ProjectName": {"Ref": "ProjectName"}
+      },
+      "Type": "Custom::S3Objects"
+    },
+    "FillTableWithWebsiteContentFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Description": "Puts website content in dynamodb table",
+        "Handler": "index.lambda_handler",
+        "Runtime": "python3.6",
+        "Role": "arn:aws:iam::835483671006:role/lambda_basic_execution",
+        "Timeout": 120,
+        "Code": {
+          "S3Bucket": "awscodepipelinetestbucketcf",
+          "S3Key": "websitedatabasecontentfunction.zip"
+        }
       }
     }
   },
