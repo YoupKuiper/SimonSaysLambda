@@ -13,6 +13,7 @@ t = TemplateBuilder()
 projTable = dbhandler.getDB("project")
 
 
+# Map intents to the right handler functions
 def lambda_handler(event, context):
     print(event)
     currentIntent = event['currentIntent']['name']
@@ -22,6 +23,10 @@ def lambda_handler(event, context):
         return addResourcesToProject(event)
     elif currentIntent == "DeployProject":
         return deployProject(event)
+    elif currentIntent == "GreetUser":
+        return greetUser(event)
+    elif currentIntent == "HelpFunction":
+        return HelpUser(event)
     else:
         return buildLexResponse(1, "Error, unrecognized intent", None, None)
 
@@ -139,7 +144,7 @@ def deployProject(event):
     projTable.put_item(Item={"ProjectName": projectName,
                              "resources": t.getTemplate()})
 
-    return createStackFromTemplateBody(projectName, t.getTemplate(), projectName)
+    return createStackFromTemplateBody(projectName, t.getTemplate(), projectName, event)
 
 
 def appendSessionAttributes(attributes, attributesToAppend):
@@ -155,7 +160,7 @@ def createStackFromURL(stackName, templateURL):
     print(response)
 
 
-def createStackFromTemplateBody(stackName, templateBody, projectName):
+def createStackFromTemplateBody(stackName, templateBody, projectName, event):
     try:
         response = cloudFormationClient.create_stack(
             StackName=stackName,
@@ -173,6 +178,44 @@ def createStackFromTemplateBody(stackName, templateBody, projectName):
 
     return buildLexResponse(0, f"Project {projectName} has been created", {}, event)
 
+# Function to gradually start a conversation
+def greetUser(event):
+    message = "Hi! I am the SimonSays bot. I can help you with the proces of \
+    creating AWS projects and deploying them. Create a project using the\
+    createproject command or say help for more information!"
+
+    return buildLexResponse(0, message, {}, event)
+
+# Function to help users during the process
+def HelpUser(event):
+    helpType = event['currentIntent']['slots']['Help']
+
+    if helpType == 'projects':
+        message = "create help"
+    elif helpType == 'resources':
+        message = "resources help"
+    elif helpType == 'deployment':
+        message = "deploy help"
+    else:
+        message = "I'm sorry, I cannot help you with that. I can only help you with resources, projects and deployment. Please select one."
+        return elicit_slot(event['sessionAttributes'], event['currentIntent']['name'], event['currentIntent']['slots'], "Help", message)
+
+    return buildLexResponse(0, message, {}, event)
+
+def elicit_slot(session_attributes, intent_name, slots, slot_to_elicit, message):
+    return {
+        'sessionAttributes': session_attributes,
+        'dialogAction': {
+            'type': 'ElicitSlot',
+            'intentName': intent_name,
+            'slots': slots,
+            'slotToElicit': slot_to_elicit,
+            'message': {
+                'contentType':'PlainText',
+                'content': message
+            },
+        }
+    }
 
 if os.environ['DEBUG'] == "True":
     jsonFile = open(sys.argv[1], "r")
