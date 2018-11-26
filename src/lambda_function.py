@@ -210,7 +210,10 @@ def elicit_slot(session_attributes, intent_name, slots, slot_to_elicit, message)
             'intentName': intent_name,
             'slots': slots,
             'slotToElicit': slot_to_elicit,
-            'message': message
+            'message': {
+                'contentType':'PlainText',
+                'content': message
+            },
         }
     }
 
