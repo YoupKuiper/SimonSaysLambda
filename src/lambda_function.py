@@ -147,6 +147,8 @@ def addResourcesToProject(event):
         # Add resources to template
         for resource in valid:
             t.addResource(resource)
+            t.addMappings(resource)
+            t.addParameters(resource)
         message = f"I have added {validString} to the project, you can deploy your project with: Deploy Project or add some other resources"
     else:
         message = "I didn't understand. Please restate your command."
@@ -186,7 +188,6 @@ def createStackFromTemplateBody(stackName, templateBody, projectName, event):
             Capabilities = ['CAPABILITY_NAMED_IAM']
             )
     except Exception as e:
-        print(str(e))
         return buildLexResponse(0, str(e), {}, event)
 
     print(response)
