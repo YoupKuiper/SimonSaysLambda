@@ -144,7 +144,7 @@ def deployProject(event):
     projTable.put_item(Item={"ProjectName": projectName,
                              "resources": t.getTemplate()})
 
-    createStackFromTemplateBody(projectName, t.getTemplate())
+    createStackFromTemplateBody(projectName, t.getTemplate(),  projectName, event)
     return buildLexResponse(0, f"Deployed {projectName}", {}, event)
 
 

@@ -23,12 +23,16 @@ if 'Mappings' not in input:
 if 'Parameters' not in input:
     inputDict.update({"Parameters": {}})
 
+resources = json.dumps(inputDict["Resources"])
+Mappings = json.dumps(inputDict["Mappings"])
+Parameters = json.dumps(inputDict["Parameters"])
+
 subprocess.call("aws cloudformation validate-template --template-body file:///" + sys.argv[1], shell=True)
 
 # Put the resource template in the db if it doesnt exist already
 try:
     response = table.put_item(
-        Item={"Id": type, "json-resources": str(inputDict["Resources"]), "json-mappings": str(inputDict["Mappings"]), "json-parameters": str(inputDict["Parameters"])},
+        Item={"Id": type, "json": input, "json-resources": resources, "json-mappings": Mappings, "json-parameters": Parameters},
         ConditionExpression='attribute_not_exists(Id)'
         )
 except:
