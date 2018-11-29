@@ -18,9 +18,23 @@ class TemplateBuilder:
         # Get resources from the database and add to the base
     def addResource(self, type):
         resource = table.get_item(Key={'Id': type})
-        item = resource["Item"]["json"]
+        item = resource["Item"]["json-resources"]
         itemDict = json.loads(item)
         self.__tempBase['Resources'].update(itemDict)
+
+        # Get parameters from the database and add to the base
+    def addParameters(self, type):
+        parameter = table.get_item(Key={'Id': type})
+        item = parameter["Item"]["json-parameters"]
+        itemDict = json.loads(item)
+        self.__tempBase['Parameters'].update(itemDict)
+
+        # Get mappings from the database and add to the base
+    def addMappings(self, type):
+        mappings = table.get_item(Key={'Id': type})
+        item = mappings["Item"]["json-mappings"]
+        itemDict = json.loads(item)
+        self.__tempBase['Mappings'].update(itemDict)
 
         # Print json for debug
     def printJSON(self):
