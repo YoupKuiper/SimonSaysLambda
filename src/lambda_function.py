@@ -88,9 +88,9 @@ def projectAlreadyExists(projectName):
     try:
         print(project['item'])
     except:
-        return false
+        return False
 
-    return true
+    return True
 
 
 # Create list of valid resources
