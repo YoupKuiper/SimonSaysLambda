@@ -630,15 +630,6 @@
         "AttributeDefinitions" : [ {"AttributeName": "Key", "AttributeType": "S"} ],
         "KeySchema" : [ {"AttributeName": "Key", "KeyType": "HASH"} ],
         "ProvisionedThroughput" : {"ReadCapacityUnits": 5, "WriteCapacityUnits": 5},
-        "TableName" : {"Ref": "ProjectName"},
-      }
-    },
-    "WebsiteDynamoDBTable": {
-      "Type" : "AWS::DynamoDB::Table",
-      "Properties" : {
-        "AttributeDefinitions" : [ {"AttributeName": "Key", "AttributeType": "S"} ],
-        "KeySchema" : [ {"AttributeName": "Key", "KeyType": "HASH"} ],
-        "ProvisionedThroughput" : {"ReadCapacityUnits": 5, "WriteCapacityUnits": 5},
         "TableName" : {"Fn::Join": ["",[{"Ref": "ProjectName"}, "Table"]]}
       }
     },
@@ -653,6 +644,10 @@
         "TableName": {"Fn::Join": ["", [{"Ref": "ProjectName"}, "Table"]]},
         "ProjectName": {"Ref": "ProjectName"}
       },
+      "DependsOn": [
+        "WebsiteDynamoDBTable",
+        "FillTableWithWebsiteContentFunction"
+      ],
       "Type": "Custom::S3Objects"
     },
     "FillTableWithWebsiteContentFunction": {
