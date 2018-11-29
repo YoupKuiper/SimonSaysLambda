@@ -10,10 +10,10 @@ class TemplateBuilder:
 
         # Create tempBase for resources
     def __init__(self):
-        self.__tempBase = {"AWSTemplateFormatVersion": "2010-09-09" ,'Parameters' : {"ProjectName": {"Default": "test", "Type": "String"}}, 'Resources': {}}
+        self.__tempBase = {}
 
     def clear(self):
-        self.__tempBase = {"AWSTemplateFormatVersion": "2010-09-09" ,'Parameters' : {"ProjectName": {"Default": "test", "Type": "String"}}, 'Resources': {}}
+        self.__tempBase = {}
 
         # Get resources from the database and add to the base
     def addResource(self, type):
