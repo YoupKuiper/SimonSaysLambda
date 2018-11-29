@@ -201,11 +201,11 @@ def HelpUser(event):
     helpType = event['currentIntent']['slots']['Help']
 
     if helpType == 'projects':
-        message = "create help"
+        message = "You can create a project by saying 'create a project'."
     elif helpType == 'resources':
-        message = "resources help"
+        message = "You can add resources after a project has been created by saying 'add', followed by the name of the resource you wish to add. You can also add multiple resources in a single command, try it out!"
     elif helpType == 'deployment':
-        message = "deploy help"
+        message = "Deploy a project after you are done adding resources to a created project by saying 'deploy project'"
     else:
         message = "I'm sorry, I cannot help you with {}. I can only help you with resources, projects and deployment. Please select one.".format(
             helpType)
