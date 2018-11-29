@@ -79,9 +79,7 @@ def createProject(event):
 # Create list of valid resources
 def validateResources(resourcesToValidate):
     valid = []
-    print(resourcesToValidate)
     allowedResources = getAllowedResources()
-    print(allowedResources)
     for resource in resourcesToValidate:
         if resource in allowedResources:
             valid.append(resource)
@@ -91,10 +89,10 @@ def validateResources(resourcesToValidate):
 # Create a well formed listed response for Lex to use
 def listResponseBuilder(list):
     listresponse = ""
-    for resource in list:
-        if list.index(resource) is (len(list) - 1) and (len(list)) != 1:
+    for index, resource in enumerate(list):
+        if index is (len(list) - 1) and (len(list)) != 1:
             listresponse = listresponse + " and " + resource
-        elif list.index(resource) is 0:
+        elif index is 0:
             listresponse = listresponse + resource
         else:
             listresponse = listresponse + ", " + resource
@@ -114,14 +112,12 @@ def addResourcesToProject(event):
 
     # If resources already exist, add them all together
     if ("resources" in sessionAttributes):
-        resources.extend([sessionAttributes['resources']])
+        sessionResources = getResourcesFromSessionAttributesResources(sessionAttributes['resources'])
+        resources.extend(sessionResources)
 
     # Validate resources
     valid = validateResources(resources)
     sessionAttributesToAppend = {}
-
-    print("valid")
-    print(valid)
 
     # Set the response message
     validString = listResponseBuilder(valid)
@@ -129,7 +125,7 @@ def addResourcesToProject(event):
         message = f"Adding a pipeline without a lambda is not supported."
     elif valid:
         # Append valid resources to session attributes
-        sessionAttributesToAppend = {'resources': ''.join(valid)}
+        sessionAttributesToAppend = {'resources': ",".join(valid)}
 
         # Add resources to template
         for resource in valid:
@@ -137,7 +133,6 @@ def addResourcesToProject(event):
         message = f"I have added {validString} to the project, you can deploy your project with: Deploy Project or add some other resources"
     else:
         message = "I didn't understand. Please restate your command."
-        sessionAttributesToAppend = {'resources': ''.join(valid)}
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
 
 
@@ -206,11 +201,11 @@ def HelpUser(event):
     helpType = event['currentIntent']['slots']['Help']
 
     if helpType == 'projects':
-        message = "create help"
+        message = "You can create a project by saying 'create a project'."
     elif helpType == 'resources':
-        message = "resources help"
+        message = "You can add resources after a project has been created by saying 'add', followed by the name of the resource you wish to add. You can also add multiple resources in a single command, try it out!"
     elif helpType == 'deployment':
-        message = "deploy help"
+        message = "Deploy a project after you are done adding resources to a created project by saying 'deploy project'"
     else:
         message = "I'm sorry, I cannot help you with {}. I can only help you with resources, projects and deployment. Please select one.".format(
             helpType)
@@ -218,6 +213,8 @@ def HelpUser(event):
 
     return buildLexResponse(0, message, {}, event)
 
+def getResourcesFromSessionAttributesResources(sessionAttributesResourcesString):
+    return sessionAttributesResourcesString.split(",")
 
 def elicit_slot(session_attributes, intent_name, slots, slot_to_elicit, message):
     return {
