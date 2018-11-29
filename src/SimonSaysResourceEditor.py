@@ -1,6 +1,7 @@
 import sys
 import json
 import boto3
+import subprocess
 from dbhandler import dbhandler
 # Use this script to add templates for resources to the database and add slottypes to lex
 
@@ -17,11 +18,21 @@ type = sys.argv[2]
 # Get dynamodb table
 table = dbhandler.getDB("template")
 
+if 'Mappings' not in input:
+    inputDict.update({"Mappings": {}})
+if 'Parameters' not in input:
+    inputDict.update({"Parameters": {}})
+
+subprocess.call("aws cloudformation validate-template --template-body file:///" + sys.argv[1], shell=True)
+
 # Put the resource template in the db if it doesnt exist already
-response = table.put_item(
-    Item={"Id": type, "json": input},
-    ConditionExpression='attribute_not_exists(Id)'
-    )
+try:
+    response = table.put_item(
+        Item={"Id": type, "json-resources": str(inputDict["Resources"]), "json-mappings": str(inputDict["Mappings"]), "json-parameters": str(inputDict["Parameters"])},
+        ConditionExpression='attribute_not_exists(Id)'
+        )
+except:
+    print("Type already exists")
 
 response = table.scan()
 
@@ -39,8 +50,6 @@ enumerationValues = []
 for resource in listOfResources:
     enumerationValue = {'value': resource}
     enumerationValues.append(enumerationValue)
-
-print(enumerationValues)
 
 newSlotType = client.put_slot_type(
     name='Resources',

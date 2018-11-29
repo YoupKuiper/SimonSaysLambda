@@ -10,19 +10,17 @@ class TemplateBuilder:
 
         # Create tempBase for resources
     def __init__(self):
-        self.__tempBase = {"AWSTemplateFormatVersion": "2010-09-09" ,'Parameters' : {"ProjectName": {"Default": "SvenTestBuild", "Type": "String"}}, 'Resources': {}}
+        self.__tempBase = {"AWSTemplateFormatVersion": "2010-09-09" ,'Parameters' : {"ProjectName": {"Default": "test", "Type": "String"}}, 'Resources': {}}
 
     def clear(self):
-        self.__tempBase = {"AWSTemplateFormatVersion": "2010-09-09" ,'Parameters' : {"ProjectName": {"Default": "SvenTestBuild", "Type": "String"}}, 'Resources': {}}
+        self.__tempBase = {"AWSTemplateFormatVersion": "2010-09-09" ,'Parameters' : {"ProjectName": {"Default": "test", "Type": "String"}}, 'Resources': {}}
 
         # Get resources from the database and add to the base
     def addResource(self, type):
         resource = table.get_item(Key={'Id': type})
         item = resource["Item"]["json"]
         itemDict = json.loads(item)
-        print("template")
         self.__tempBase['Resources'].update(itemDict)
-        print(self.__tempBase)
 
         # Print json for debug
     def printJSON(self):
