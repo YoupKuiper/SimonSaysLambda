@@ -69,11 +69,28 @@ def createProject(event):
     projectNameInput = event['inputTranscript']
     if (' ' in projectNameInput) is True:
         projectNameInput = projectNameInput.replace(" ", "-")
-    message = f"Project {projectNameInput} has been created, please define the resources you want to have in your project"
-    sessionAttributesToAppend = {"projectName": projectNameInput}
-    projTable.put_item(Item={"ProjectName": projectName, "resources": []})
+
+    sessionAttributesToAppend = {}
+
+    if projectAlreadyExists(projectNameInput):
+        message = f"Project {projectNameInput} already exists, so it cannot be created. What would you like to name your project instead?"
+    else:
+        message = f"Project {projectNameInput} has been created, please define the resources you want to have in your project"
+        sessionAttributesToAppend = {"projectName": projectNameInput}
+        projTable.put_item(Item={"ProjectName": projectName, "resources": []})
 
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
+
+def projectAlreadyExists(projectName):
+    project = projTable.get_item(Key={'ProjectName': projectName})
+
+    # If project already exists, it will be able to print
+    try:
+        print(project['item'])
+    except:
+        return false
+
+    return true
 
 
 # Create list of valid resources
