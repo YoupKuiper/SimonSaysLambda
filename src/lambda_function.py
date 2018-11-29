@@ -2,6 +2,7 @@ import boto3
 from TemplateBuilder import TemplateBuilder
 import os
 import sys
+import traceback
 import json
 import time
 from dbhandler import dbhandler
@@ -168,9 +169,11 @@ def createStackFromTemplateBody(stackName, templateBody, projectName, event):
     try:
         response = cloudFormationClient.create_stack(
             StackName=stackName,
-            TemplateBody=str(templateBody))
+            TemplateBody=str(templateBody),
+            Capabilities = ['CAPABILITY_NAMED_IAM']
+            )
     except Exception as e:
-        return buildLexResponse(0, "Stack already exists", {}, event)
+        return buildLexResponse(0, str(e), {}, event)
 
     print(response)
 
