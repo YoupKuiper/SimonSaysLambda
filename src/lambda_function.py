@@ -137,6 +137,7 @@ def addResourcesToProject(event):
         message = f"I have added {validString} to the project, you can deploy your project with: Deploy Project or add some other resources"
     else:
         message = "I didn't understand. Please restate your command."
+        sessionAttributesToAppend = {'resources': ''.join(valid)}
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
 
 
@@ -148,7 +149,8 @@ def deployProject(event):
     projTable.put_item(Item={"ProjectName": projectName,
                              "resources": t.getTemplate()})
 
-    return createStackFromTemplateBody(projectName, t.getTemplate(), projectName, event)
+    createStackFromTemplateBody(projectName, t.getTemplate())
+    return buildLexResponse(0, f"Deployed {projectName}", {}, event)
 
 
 def appendSessionAttributes(attributes, attributesToAppend):
