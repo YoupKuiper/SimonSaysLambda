@@ -2,7 +2,6 @@ import boto3
 from TemplateBuilder import TemplateBuilder
 import os
 import sys
-import traceback
 import json
 import time
 from dbhandler import dbhandler
@@ -189,9 +188,12 @@ def createStackFromTemplateBody(stackName, templateBody, projectName, event):
 
 
 def greetUser(event):
-    message = "Hi! I am the SimonSays bot. I can help you with the process of\
-    creating AWS projects and deploying them. Create a project using the\
-    create project command or say help for more information!"
+
+    name = event['sessionAttributes']['name']
+
+    message = "Hi, {}! I am the SimonSays bot. I can help you with the process " \
+    "of creating AWS projects and deploying them. Create a project using the create" \
+    "project command or say help for more information!".format(name)
 
     return buildLexResponse(0, message, {}, event)
 
