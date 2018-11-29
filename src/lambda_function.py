@@ -169,6 +169,7 @@ def createStackFromTemplateBody(stackName, templateBody, projectName, event):
             Capabilities = ['CAPABILITY_NAMED_IAM']
             )
     except Exception as e:
+        print(str(e))
         return buildLexResponse(0, str(e), {}, event)
 
     print(response)
