@@ -86,7 +86,7 @@ def projectAlreadyExists(projectName):
 
     # If project already exists, it will be able to print
     try:
-        print(project['item'])
+        print(project['Item'])
     except:
         return False
 
