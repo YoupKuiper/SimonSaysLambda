@@ -85,13 +85,11 @@ def projectAlreadyExists(projectName):
     project = projTable.get_item(Key={'ProjectName': projectName})
 
     # If project already exists, it will be able to print
-    try:
-        print(project['Item'])
-    except:
-        return False
-
-    return True
-
+    # if 'Item' in project:
+    #     return True
+    # else:
+    #     return False
+    return False
 
 # Create list of valid resources
 def validateResources(resourcesToValidate):
@@ -211,8 +209,8 @@ def greetUser(event):
         greeting = greeting + " " + name
 
     message = "{}! I am the SimonSays bot. I can help you with the process " \
-    "of creating AWS projects and deploying them. Create a project using the create" \
-    "project command or say help for more information!".format(greeting)
+    "of creating AWS projects and deploying them. Create a project" \
+    "or ask me for help for more information!".format(greeting)
 
     return buildLexResponse(0, message, {}, event)
 
