@@ -208,11 +208,11 @@ def deployProject(event):
     try:
         response = lambdaClient.invoke(FunctionName='SimonSaysDeployer',
                         InvocationType='Event',
-                        Payload=json.dumps(event['sessionResources']))
+                        Payload=json.dumps(event['sessionAttributes']))
     except Exception as e:
         print(e)
 
-    projectName = event['projectName']
+    projectName = event['sessionAttributes']['projectName']
     return buildLexResponse(0, f"Deployed {projectName}", {}, event)
 
 

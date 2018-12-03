@@ -7,15 +7,21 @@ t = TemplateBuilder()
 cloudFormationClient = boto3.client('cloudformation')
 projTable = dbhandler.getDB("project")
 
+
 def lambda_handler(event, context):
-    resources = event['sessionAttributes']['resources']
-    projectName = event['sessionAttributes']['projectName']
+    resources = event['resources'].split(',')
+    projectName = event['projectName']
 
     if 'vpc' in resources:
         t.addResource('vpc')
+        t.addMappings('vpc')
+        t.addParameters('vpc')
+        resources.remove('vpc')
 
     createStackFromTemplateBody(projectName + "-VPC", t.getTemplate())
     t.clear()
+
+
 
     for resource in resources:
         t.addResource(resource)
@@ -24,9 +30,10 @@ def lambda_handler(event, context):
 
     createStackFromTemplateBody(projectName, t.getTemplate())
 
+
 # Deploy a created project by launching the stack with cloudformation
 def deployProject(event):
-    projectName = event['sessionAttributes']['projectName']
+    projectName = event['projectName']
 
     # Add project to projects table
     projTable.put_item(Item={"ProjectName": projectName,
