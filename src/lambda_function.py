@@ -205,12 +205,14 @@ def createStackFromTemplateBody(stackName, templateBody, projectName, event):
 
 def greetUser(event):
 
+    greeting = "Hi"
     if 'name' in event['sessionAttributes']:
         name = event['sessionAttributes']['name']
+        greeting = greeting + " " + name
 
-    message = "Hi, {}! I am the SimonSays bot. I can help you with the process " \
+    message = "{}! I am the SimonSays bot. I can help you with the process " \
     "of creating AWS projects and deploying them. Create a project using the create" \
-    "project command or say help for more information!".format(name)
+    "project command or say help for more information!".format(greeting)
 
     return buildLexResponse(0, message, {}, event)
 
