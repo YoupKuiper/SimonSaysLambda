@@ -1,14 +1,11 @@
 import boto3
-from TemplateBuilder import TemplateBuilder
 import os
 import sys
 import json
-import time
 from dbhandler import dbhandler
 
-cloudFormationClient = boto3.client('cloudformation')
 lexBotClient = boto3.client('lex-models')
-t = TemplateBuilder()
+lambdaClient = boto3.client('lambda')
 
 projTable = dbhandler.getDB("project")
 
@@ -64,7 +61,6 @@ def getAllowedResources():
 
 # Use the given name as the name for the project
 def createProject(event):
-    t.clear()
     projectName = event['currentIntent']['slots']['ProjectName']
     projectNameInput = event['inputTranscript']
     if (' ' in projectNameInput) is True:
@@ -80,6 +76,7 @@ def createProject(event):
         projTable.put_item(Item={"ProjectName": projectName, "resources": []})
 
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
+
 
 def projectAlreadyExists(projectName):
     project = projTable.get_item(Key={'ProjectName': projectName})
@@ -119,19 +116,20 @@ def addResourcesToProject(event):
     sessionAttributes = event['sessionAttributes']
 
     # If there is no project defined, return an error message
-    if sessionAttributes['projectName'] is None:
-        message = "Please define a project before adding resources"
+    if 'projectName' not in sessionAttributes:
+        message = "Please create a project before adding resources"
         return buildLexResponse(0, message, None, event)
 
     projectName = sessionAttributes['projectName']
 
     # If resources already exist, add them all together
     if ("resources" in sessionAttributes):
-        sessionResources = getResourcesFromSessionAttributesResources(sessionAttributes['resources'])
+        sessionResources = sessionAttributes['resources'].split(",")
         resources.extend(sessionResources)
 
     # Validate resources
     valid = validateResources(resources)
+    print(valid)
     sessionAttributesToAppend = {}
 
     # Set the response message
@@ -142,27 +140,10 @@ def addResourcesToProject(event):
         # Append valid resources to session attributes
         sessionAttributesToAppend = {'resources': ",".join(valid)}
 
-        # Add resources to template
-        for resource in valid:
-            t.addResource(resource)
-            t.addMappings(resource)
-            t.addParameters(resource)
         message = f"I have added {validString} to the project, you can deploy your project with: Deploy Project or add some other resources"
     else:
         message = "I didn't understand. Please restate your command."
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
-
-
-# Deploy a created project by launching the stack with cloudformation
-def deployProject(event):
-    projectName = event['sessionAttributes']['projectName']
-
-    # Add project to projects table
-    projTable.put_item(Item={"ProjectName": projectName,
-                             "resources": t.getTemplate()})
-
-    createStackFromTemplateBody(projectName, t.getTemplate(),  projectName, event)
-    return buildLexResponse(0, f"Deployed {projectName}", {}, event)
 
 
 def appendSessionAttributes(attributes, attributesToAppend):
@@ -170,37 +151,7 @@ def appendSessionAttributes(attributes, attributesToAppend):
     return attributes
 
 
-def createStackFromURL(stackName, templateURL):
-    response = cloudFormationClient.create_stack(
-        StackName=stackName,
-        TemplateURL=templateURL)
-
-    print(response)
-
-
-def createStackFromTemplateBody(stackName, templateBody, projectName, event):
-    try:
-        response = cloudFormationClient.create_stack(
-            StackName=stackName,
-            TemplateBody=str(templateBody),
-            Capabilities = ['CAPABILITY_NAMED_IAM']
-            )
-    except Exception as e:
-        return buildLexResponse(0, str(e), {}, event)
-
-    print(response)
-
-    response = cloudFormationClient.describe_stacks(StackName=stackName)
-
-    while response['Stacks'][0]['StackStatus'] == "CREATE_IN_PROGRESS":
-        time.sleep(10)
-        response = cloudFormationClient.describe_stacks(StackName=stackName)
-
-    return buildLexResponse(0, f"Project {projectName} has been created", {}, event)
-
 # Function to gradually start a conversation
-
-
 def greetUser(event):
 
     greeting = "Hi"
@@ -209,14 +160,13 @@ def greetUser(event):
         greeting = greeting + " " + name
 
     message = "{}! I am the SimonSays bot. I can help you with the process " \
-    "of creating AWS projects and deploying them. Create a project" \
+    "of creating AWS projects and deploying them. Create a project " \
     "or ask me for help for more information!".format(greeting)
 
     return buildLexResponse(0, message, {}, event)
 
+
 # Function to help users during the process
-
-
 def HelpUser(event):
     helpType = event['currentIntent']['slots']['Help']
 
@@ -233,8 +183,10 @@ def HelpUser(event):
 
     return buildLexResponse(0, message, {}, event)
 
+
 def getResourcesFromSessionAttributesResources(sessionAttributesResourcesString):
     return sessionAttributesResourcesString.split(",")
+
 
 def elicit_slot(session_attributes, intent_name, slots, slot_to_elicit, message):
     return {
@@ -250,6 +202,18 @@ def elicit_slot(session_attributes, intent_name, slots, slot_to_elicit, message)
                 },
             }
         }
+
+
+def deployProject(event):
+    try:
+        response = lambdaClient.invoke(FunctionName='SimonSaysDeployer',
+                        InvocationType='Event',
+                        Payload=json.dumps(event['sessionResources']))
+    except Exception as e:
+        print(e)
+
+    projectName = event['projectName']
+    return buildLexResponse(0, f"Deployed {projectName}", {}, event)
 
 
 if os.environ['DEBUG'] == "True":
