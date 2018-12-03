@@ -205,7 +205,8 @@ def createStackFromTemplateBody(stackName, templateBody, projectName, event):
 
 def greetUser(event):
 
-    name = event['sessionAttributes']['name']
+    if 'name' in event['sessionAttributes']:
+        name = event['sessionAttributes']['name']
 
     message = "Hi, {}! I am the SimonSays bot. I can help you with the process " \
     "of creating AWS projects and deploying them. Create a project using the create" \
