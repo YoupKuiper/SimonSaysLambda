@@ -86,7 +86,7 @@ def projectAlreadyExists(projectName):
 
     # If project already exists, it will be able to print
     try:
-        print(project['Item'])
+        print(project['item'])
     except:
         return False
 
@@ -163,7 +163,7 @@ def deployProject(event):
     projTable.put_item(Item={"ProjectName": projectName,
                              "resources": t.getTemplate()})
 
-    createStackFromTemplateBody(projectName, t.getTemplate())
+    createStackFromTemplateBody(projectName, t.getTemplate(),  projectName, event)
     return buildLexResponse(0, f"Deployed {projectName}", {}, event)
 
 
@@ -177,12 +177,16 @@ def createStackFromURL(stackName, templateURL):
         StackName=stackName,
         TemplateURL=templateURL)
 
+    print(response)
+
 
 def createStackFromTemplateBody(stackName, templateBody, projectName, event):
     try:
         response = cloudFormationClient.create_stack(
             StackName=stackName,
-            TemplateBody=str(templateBody))
+            TemplateBody=str(templateBody),
+            Capabilities = ['CAPABILITY_NAMED_IAM']
+            )
     except Exception as e:
         return buildLexResponse(0, str(e), {}, event)
 
@@ -200,9 +204,12 @@ def createStackFromTemplateBody(stackName, templateBody, projectName, event):
 
 
 def greetUser(event):
-    message = "Hi! I am the SimonSays bot. I can help you with the process of\
-    creating AWS projects and deploying them. Create a project using the\
-    create project command or say help for more information!"
+
+    name = event['sessionAttributes']['name']
+
+    message = "Hi, {}! I am the SimonSays bot. I can help you with the process " \
+    "of creating AWS projects and deploying them. Create a project using the create" \
+    "project command or say help for more information!".format(name)
 
     return buildLexResponse(0, message, {}, event)
 
@@ -213,11 +220,11 @@ def HelpUser(event):
     helpType = event['currentIntent']['slots']['Help']
 
     if helpType == 'projects':
-        message = "create help"
+        message = "You can create a project by saying 'create a project'."
     elif helpType == 'resources':
-        message = "resources help"
+        message = "You can add resources after a project has been created by saying 'add', followed by the name of the resource you wish to add. You can also add multiple resources in a single command, try it out!"
     elif helpType == 'deployment':
-        message = "deploy help"
+        message = "Deploy a project after you are done adding resources to a created project by saying 'deploy project'"
     else:
         message = "I'm sorry, I cannot help you with {}. I can only help you with resources, projects and deployment. Please select one.".format(
             helpType)
