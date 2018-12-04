@@ -7,16 +7,14 @@ Resources:
     Properties:
       Timeout: 30
       Policies:
-        - SimonSaysConversationAccess
-        - Version: '2012-10-17'
-          Statement:
-          - Effect: Allow
-            Action:
-            - lambda:InvokeFunction
-            - logs:*
-            - dynamodb:GetItem
-            - lex:GetSlotType
-            Resource: "*"
+      - Statement:
+        - Effect: Allow
+          Action:
+          - lambda:InvokeFunction
+          - logs:*
+          - dynamodb:GetItem
+          - lex:GetSlotType
+          Resource: "*"
       Handler: lambda_function.lambda_handler
       Runtime: python3.6
       CodeUri: ./src/conversation_lambda
