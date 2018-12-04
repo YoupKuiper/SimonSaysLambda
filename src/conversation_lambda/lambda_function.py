@@ -6,7 +6,6 @@ from dbhandler import dbhandler
 
 lexBotClient = boto3.client('lex-models')
 lambdaClient = boto3.client('lambda')
-
 projTable = dbhandler.getDB("project")
 
 
@@ -73,7 +72,6 @@ def createProject(event):
     else:
         message = f"Project {projectNameInput} has been created, please define the resources you want to have in your project"
         sessionAttributesToAppend = {"projectName": projectNameInput}
-        projTable.put_item(Item={"ProjectName": projectName, "resources": []})
 
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
 
