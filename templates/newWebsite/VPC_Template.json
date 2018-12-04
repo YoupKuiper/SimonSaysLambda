@@ -15,6 +15,9 @@
         "Prod"
       ],
       "Description": "Environment to identify resources with."
+    },
+    "ProjectName": {
+      "Type": "String"
     }
   },
   "Mappings": {
@@ -103,7 +106,7 @@
           {
             "Key": "Environment",
             "Value": {
-              "Ref": "Environment"
+              "Ref": "ProjectName"
             }
           },
           {
@@ -113,7 +116,7 @@
                 "",
                 [
                   {
-                    "Ref": "Environment"
+                    "Ref": "ProjectName"
                   },
                   "-VPC"
                 ]
@@ -167,7 +170,7 @@
           {
             "Key": "Environment",
             "Value": {
-              "Ref": "Environment"
+              "Ref": "ProjectName"
             }
           },
           {
@@ -225,7 +228,7 @@
           {
             "Key": "Environment",
             "Value": {
-              "Ref": "Environment"
+              "Ref": "ProjectName"
             }
           },
           {
@@ -283,7 +286,7 @@
           {
             "Key": "Environment",
             "Value": {
-              "Ref": "Environment"
+              "Ref": "ProjectName"
             }
           },
           {
@@ -341,7 +344,7 @@
           {
             "Key": "Environment",
             "Value": {
-              "Ref": "Environment"
+              "Ref": "ProjectName"
             }
           },
           {
@@ -362,7 +365,7 @@
           {
             "Key": "Environment",
             "Value": {
-              "Ref": "Environment"
+              "Ref": "ProjectName"
             }
           },
           {
@@ -393,7 +396,7 @@
           {
             "Key": "Environment",
             "Value": {
-              "Ref": "Environment"
+              "Ref": "ProjectName"
             }
           },
           {
@@ -469,7 +472,7 @@
           {
             "Key": "Environment",
             "Value": {
-              "Ref": "Environment"
+              "Ref": "ProjectName"
             }
           },
           {
@@ -590,7 +593,7 @@
           {
             "Key": "Environment",
             "Value": {
-              "Ref": "Environment"
+              "Ref": "ProjectName"
             }
           },
           {
@@ -613,7 +616,7 @@
             "",
             [
               {
-                "Ref": "Environment"
+                "Ref": "ProjectName"
               },
               "-MyVPC"
             ]
@@ -632,7 +635,7 @@
             "",
             [
               {
-                "Ref": "Environment"
+                "Ref": "ProjectName"
               },
               "-publicSubnet01"
             ]
@@ -651,7 +654,7 @@
             "",
             [
               {
-                "Ref": "Environment"
+                "Ref": "ProjectName"
               },
               "-publicSubnet02"
             ]
@@ -670,7 +673,7 @@
             "",
             [
               {
-                "Ref": "Environment"
+                "Ref": "ProjectName"
               },
               "-privateSubnet01"
             ]
@@ -689,7 +692,7 @@
             "",
             [
               {
-                "Ref": "Environment"
+                "Ref": "ProjectName"
               },
               "-privateSubnet02"
             ]
@@ -708,7 +711,7 @@
             "",
             [
               {
-                "Ref": "Environment"
+                "Ref": "ProjectName"
               },
               "-EndpointSG"
             ]

@@ -35,8 +35,7 @@ subprocess.call("aws cloudformation validate-template --template-body file:///" 
 # Put the resource template in the db if it doesnt exist already
 try:
     response = table.put_item(
-        Item={"Id": type, "json": input, "json-resources": resources, "json-mappings": Mappings, "json-parameters": Parameters, "json-outputs" : Outputs},
-        ConditionExpression='attribute_not_exists(Id)'
+        Item={"Id": type, "json": input, "json-resources": resources, "json-mappings": Mappings, "json-parameters": Parameters, "json-outputs" : Outputs}
         )
 except:
     print("Type already exists")

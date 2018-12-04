@@ -138,7 +138,7 @@ def addResourcesToProject(event):
         # Append valid resources to session attributes
         sessionAttributesToAppend = {'resources': ",".join(valid)}
 
-        message = f"I have added {validString} to the project, you can deploy your project with: Deploy Project or add some other resources"
+        message = f"I have added {validString} to the project, you can deploy your project or add some other resources"
     else:
         message = "I didn't understand. Please restate your command."
     return buildLexResponse(0, message, sessionAttributesToAppend, event)
@@ -211,7 +211,7 @@ def deployProject(event):
         print(e)
 
     projectName = event['sessionAttributes']['projectName']
-    return buildLexResponse(0, f"Deployed {projectName}", {}, event)
+    return buildLexResponse(0, f"Deployed project: {projectName}. It should be ready in a couple of minutes", {}, event)
 
 
 if os.environ['DEBUG'] == "True":

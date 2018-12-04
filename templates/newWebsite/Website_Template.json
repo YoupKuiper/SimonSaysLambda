@@ -463,7 +463,7 @@
           }
         ],
         "VpcId": {
-          "Fn::ImportValue": "Demo-MyVPC"
+          "Fn::ImportValue": {"Fn::Join": ["",[ {"Ref" : "ProjectName"}, "-MyVPC"]]}
         }
       },
       "Type": "AWS::EC2::SecurityGroup"
@@ -523,10 +523,10 @@
           ],
           "SubnetIds": [
             {
-              "Fn::ImportValue": "Demo-publicSubnet01"
+              "Fn::ImportValue": {"Fn::Join": ["",[ {"Ref" : "ProjectName"}, "-publicSubnet01"]]}
             },
             {
-              "Fn::ImportValue": "Demo-publicSubnet02"
+              "Fn::ImportValue": {"Fn::Join": ["",[ {"Ref" : "ProjectName"}, "-publicSubnet02"]]}
             }
           ]
         }
