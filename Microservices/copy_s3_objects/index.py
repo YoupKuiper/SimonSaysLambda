@@ -5,6 +5,7 @@ import cfnresponse
 import boto3
 from botocore.exceptions import ClientError
 client = boto3.client('s3')
+lambdaClient = boto3.client('lambda')
 
 import logging
 logger = logging.getLogger()
@@ -24,7 +25,7 @@ def handler(event, context):
     if event['RequestType'] == 'Create' or event['RequestType'] == 'Update':
       result = copy_objects(source_bucket, source_prefix, bucket, prefix, APIUrl)
     elif event['RequestType'] == 'Delete':
-      result = delete_objects(bucket, prefix)
+      result = lambdaClient.invoke(FunctionName='S3BucketDeletionService', InvocationType='RequestResponse', Payload=bucket)
   except ClientError as e:
     logger.error('Error: %s', e)
     result = cfnresponse.FAILED
@@ -45,11 +46,4 @@ def copy_objects(source_bucket, source_prefix, bucket, prefix, APIUrl):
     if not key.endswith('/'):
       print 'copy {} to {}'.format(key, dest_key)
       client.copy_object(CopySource={'Bucket': source_bucket, 'Key': key}, Bucket=bucket, Key = dest_key)
-  return cfnresponse.SUCCESS
-
-def delete_objects(bucket, prefix):
-  paginator = client.get_paginator('list_objects_v2')
-  page_iterator = paginator.paginate(Bucket=bucket, Prefix=prefix)
-  objects = [{'Key': x['Key']} for page in page_iterator for x in page['Contents']]
-  client.delete_objects(Bucket=bucket, Delete={'Objects': objects})
   return cfnresponse.SUCCESS
