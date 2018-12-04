@@ -19,7 +19,7 @@ def lambda_handler(event, context):
         t.addOutputs('vpc')
         resources.remove('vpc')
 
-    createStackFromTemplateBody(projectName + "-VPC", t.getTemplate())
+    createStackFromTemplateBody(projectName + "-VPC", projectName, t.getTemplate())
     t.clear()
 
     for resource in resources:
@@ -28,7 +28,7 @@ def lambda_handler(event, context):
         t.addParameters(resource)
         t.addOutputs(resource)
 
-    createStackFromTemplateBody(projectName, t.getTemplate())
+    createStackFromTemplateBody(projectName, projectName, t.getTemplate())
 
 
 # Deploy a created project by launching the stack with cloudformation
@@ -42,7 +42,7 @@ def deployProject(event):
     createStackFromTemplateBody(projectName, t.getTemplate())
 
 
-def createStackFromTemplateBody(stackName, templateBody):
+def createStackFromTemplateBody(stackName, projectName, templateBody):
     response = cloudFormationClient.create_stack(
         StackName=stackName,
         TemplateBody=str(templateBody),
@@ -50,7 +50,7 @@ def createStackFromTemplateBody(stackName, templateBody):
         Parameters=[
             {
                 'ParameterKey': 'ProjectName',
-                'ParameterValue': stackName,
+                'ParameterValue': projectName,
             }
         ]
         )

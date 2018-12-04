@@ -211,7 +211,7 @@ def deployProject(event):
         print(e)
 
     projectName = event['sessionAttributes']['projectName']
-    return buildLexResponse(0, f"Deployed project: {projectName}. It should be ready in a couple of minutes", {}, event)
+    return buildLexResponse(0, f"Deployed project {projectName}. It should be ready in a couple of minutes", {}, event)
 
 
 if os.environ['DEBUG'] == "True":

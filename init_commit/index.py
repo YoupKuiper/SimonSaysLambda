@@ -2,6 +2,7 @@ import boto3
 import os
 import zipfile
 import cfnresponse
+import json
 
 
 FILEDIR = "/tmp/files/"
@@ -17,6 +18,7 @@ def lambda_handler(event, context):
     try:
         bucketName = event["ResourceProperties"]["BucketName"]
         contentZipName = event["ResourceProperties"]["ContentZipName"]
+        projectName = event["ResourceProperties"]["ProjectName"]
         os.chdir(ROOTDIR)
         s3Client.Bucket(bucketName).download_file(contentZipName, contentZipName)
     except:
@@ -44,6 +46,10 @@ def lambda_handler(event, context):
         for filename in os.listdir(FILEDIR):
             in_file = open("/tmp/files/" + filename, "rb")
             data = in_file.read()
+            if filename == "template.json":
+                datajson = json.loads(data)
+                datajson["Parameters"]["ProjectName"]["Default"] = projectName
+                data = json.dumps(datajson, sort_keys=False, indent=4, separators=(',', ':'))
             in_file.close()
             response = codecommitClient.put_file(repositoryName=repoName, branchName='master', fileContent=data ,filePath=filename, parentCommitId=commitId)
             commitId = response['commitId']
@@ -52,3 +58,12 @@ def lambda_handler(event, context):
 
     result = cfnresponse.SUCCESS
     cfnresponse.send(event, context, result, {})
+
+lambda_handler({
+	"ResourceProperties": {
+		"BucketName": "awscodepipelinetestbucketcf",
+		"RepositoryName": "testrepos",
+		"ContentZipName": "test.zip",
+		"ProjectName": "overveertiendagengeentweehonderdeurodangaatuerachtermekaaruit"
+	}
+}, {})
