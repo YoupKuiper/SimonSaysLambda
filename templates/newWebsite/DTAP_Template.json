@@ -591,7 +591,7 @@
         "Timeout": 120,
         "Code": {
           "S3Bucket": "awscodepipelinetestbucketcf",
-          "S3Key": "codetest.zip"
+          "S3Key": "initcommitfunction.zip"
         }
       }
     },
