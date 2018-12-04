@@ -1,6 +1,11 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Test
+Description: Stack for the development of the SimonSays project
+Parameters:
+  DEBUG:
+    Type: String
+    Default: "False"
+    Description: Sets the correct value for the database
 Resources:
   SimonSaysConversation:
     Type: AWS::Serverless::Function
@@ -18,6 +23,9 @@ Resources:
       Handler: lambda_function.lambda_handler
       Runtime: python3.6
       CodeUri: ./src/conversation_lambda
+      Environment:
+        Variables:
+          DEPLOY_ENV: !Ref DEBUG
       FunctionName: SimonSaysConversation
   SimonSaysDeployer:
     Type: AWS::Serverless::Function
