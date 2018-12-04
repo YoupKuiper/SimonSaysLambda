@@ -21,8 +21,6 @@ def lambda_handler(event, context):
     createStackFromTemplateBody(projectName + "-VPC", t.getTemplate())
     t.clear()
 
-
-
     for resource in resources:
         t.addResource(resource)
         t.addMappings(resource)
