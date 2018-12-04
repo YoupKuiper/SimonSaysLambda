@@ -16,6 +16,7 @@ def lambda_handler(event, context):
         t.addResource('vpc')
         t.addMappings('vpc')
         t.addParameters('vpc')
+        t.addOutputs('vpc')
         resources.remove('vpc')
 
     createStackFromTemplateBody(projectName + "-VPC", t.getTemplate())
@@ -25,6 +26,7 @@ def lambda_handler(event, context):
         t.addResource(resource)
         t.addMappings(resource)
         t.addParameters(resource)
+        t.addOutputs(resource)
 
     createStackFromTemplateBody(projectName, t.getTemplate())
 

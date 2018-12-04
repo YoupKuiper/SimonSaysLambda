@@ -36,11 +36,11 @@ class TemplateBuilder:
         itemDict = json.loads(item)
         self.__tempBase.update({"Mappings": itemDict})
 
-    def addExports(self, type):
-        exports = table.get_item(Key={'Id': type})
-        item = exports["Item"]["json-exports"]
+    def addOutputs(self, type):
+        outputs = table.get_item(Key={'Id': type})
+        item = outputs["Item"]["json-outputs"]
         itemDict = json.loads(item)
-        self.__tempBase.update({"exports": itemDict})
+        self.__tempBase.update({"Outputs": itemDict})
 
         # Print json for debug
     def printJSON(self):
