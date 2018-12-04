@@ -3,6 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Description: Test
 Resources:
   SimonSaysConversation:
+    FunctionName: SimonSaysConversation
     Type: AWS::Serverless::Function
     Properties:
       Timeout: 30
@@ -21,6 +22,7 @@ Resources:
       CodeUri: ./src/conversation_lambda
   SimonSaysDeployer:
     Type: AWS::Serverless::Function
+    FunctionName: SimonSaysDeployer
     Properties:
       Timeout: 600
       Policies:
