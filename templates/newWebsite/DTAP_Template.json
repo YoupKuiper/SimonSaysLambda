@@ -611,7 +611,10 @@
           ]
         },
         "BucketName": "awscodepipelinetestbucketcf",
-        "ContentZipName": "test.zip"
+        "ContentZipName": "test.zip",
+        "ProjectName": {
+          "Ref": "ProjectName"
+        }
       }
     }
   }

@@ -4,6 +4,7 @@ import boto3
 import subprocess
 from dbhandler import dbhandler
 # Use this script to add templates for resources to the database and add slottypes to lex
+# Pass the filepath as the first parameter and the slot/database name as the second
 
 # Read file from json and parse to dict
 jsonFile = open(sys.argv[1], "r")
