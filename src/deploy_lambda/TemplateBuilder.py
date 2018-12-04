@@ -27,6 +27,7 @@ class TemplateBuilder:
         parameter = table.get_item(Key={'Id': type})
         item = parameter["Item"]["json-parameters"]
         itemDict = json.loads(item)
+        itemDict.update({"ProjectName": {"Type": "String"}})
         self.__tempBase.update({"Parameters": itemDict})
 
         # Get mappings from the database and add to the base
