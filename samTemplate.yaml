@@ -15,17 +15,17 @@ Resources:
       - Statement:
         - Effect: Allow
           Action:
-          - 'lambda:InvokeFunction'
-          - 'logs:*'
-          - 'dynamodb:GetItem'
-          - 'lex:GetSlotType'
+            - 'lambda:InvokeFunction'
+            - 'logs:*'
+            - 'dynamodb:GetItem'
+            - 'lex:GetSlotType'
           Resource: '*'
       Handler: lambda_function.lambda_handler
       Runtime: python3.6
       CodeUri: ./src/conversation_lambda
       Environment:
         Variables:
-          DEPLOY_ENV: !Ref DEBUG
+          DEBUG: !Ref DEBUG
       FunctionName: SimonSaysConversation
   SimonSaysDeployer:
     Type: AWS::Serverless::Function
