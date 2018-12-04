@@ -286,7 +286,7 @@
                         {
                           "Ref": "ProjectName"
                         },
-                        "Stack"
+                        "-demo"
                       ]
                     ]
                   },
