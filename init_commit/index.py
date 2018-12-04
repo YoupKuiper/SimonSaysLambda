@@ -58,12 +58,3 @@ def lambda_handler(event, context):
 
     result = cfnresponse.SUCCESS
     cfnresponse.send(event, context, result, {})
-
-lambda_handler({
-	"ResourceProperties": {
-		"BucketName": "awscodepipelinetestbucketcf",
-		"RepositoryName": "testrepos",
-		"ContentZipName": "test.zip",
-		"ProjectName": "overveertiendagengeentweehonderdeurodangaatuerachtermekaaruit"
-	}
-}, {})
