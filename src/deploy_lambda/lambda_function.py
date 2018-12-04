@@ -46,7 +46,13 @@ def createStackFromTemplateBody(stackName, templateBody):
     response = cloudFormationClient.create_stack(
         StackName=stackName,
         TemplateBody=str(templateBody),
-        Capabilities = ['CAPABILITY_NAMED_IAM']
+        Capabilities = ['CAPABILITY_NAMED_IAM'],
+        Parameters=[
+            {
+                'ParameterKey': 'ProjectName',
+                'ParameterValue': stackName,
+            }
+        ]
         )
 
     response = cloudFormationClient.describe_stacks(StackName=stackName)
