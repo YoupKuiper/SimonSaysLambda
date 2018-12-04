@@ -22,7 +22,7 @@ def lambda_handler(event, context):
         os.chdir(ROOTDIR)
         s3Client.Bucket(bucketName).download_file(contentZipName, contentZipName)
     except:
-        cfnresponse.send(event, context, result, {})
+        return cfnresponse.send(event, context, result, {})
 
     #Unpack the zipfile
     try:
@@ -30,7 +30,7 @@ def lambda_handler(event, context):
         zip_ref.extractall(FILEDIR)
         zip_ref.close()
     except:
-        cfnresponse.send(event, context, result, {})
+        return cfnresponse.send(event, context, result, {})
 
     #Create initial commit
     try:
@@ -39,7 +39,7 @@ def lambda_handler(event, context):
         initialCommit = codecommitClient.put_file(repositoryName=repoName, branchName='master', fileContent=readmeContent, filePath='readme.md')
         commitId = initialCommit['commitId']
     except:
-        cfnresponse.send(event, context, result, {})
+        return cfnresponse.send(event, context, result, {})
 
     #Write unpacked zip to codeCommit
     try:
@@ -54,7 +54,7 @@ def lambda_handler(event, context):
             response = codecommitClient.put_file(repositoryName=repoName, branchName='master', fileContent=data ,filePath=filename, parentCommitId=commitId)
             commitId = response['commitId']
     except:
-        cfnresponse.send(event, context, result, {})
+        return cfnresponse.send(event, context, result, {})
 
     result = cfnresponse.SUCCESS
     cfnresponse.send(event, context, result, {})
