@@ -25,10 +25,7 @@ def handler(event, context):
     if event['RequestType'] == 'Create' or event['RequestType'] == 'Update':
       result = copy_objects(source_bucket, source_prefix, bucket, prefix, APIUrl)
     elif event['RequestType'] == 'Delete':
-<<<<<<< Updated upstream
       print('deleting')
-=======
->>>>>>> Stashed changes
       result = delete_objects(bucket, prefix)
   except ClientError as e:
     logger.error('Error: %s', e)

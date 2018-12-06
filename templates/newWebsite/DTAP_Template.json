@@ -163,8 +163,26 @@
         }
       }
     },
-    "CodePipeline": {
+    "CodePipelineBucket": {
+      "Type": "AWS::S3::Bucket",
       "DependsOn": "CodeCommitRepository",
+      "Properties": {
+        "BucketName": {
+          "Fn::Join": [
+            "",
+            [
+              "codepipeline-",
+              {
+                "Ref": "ProjectName"
+              },
+              "-artifactbucket"
+            ]
+          ]
+        }
+      }
+    },
+    "CodePipeline": {
+      "DependsOn": "CodePipelineBucket",
       "Properties": {
         "Name": {
           "Fn::Join": [
@@ -178,7 +196,18 @@
           ]
         },
         "ArtifactStore": {
-          "Location": "awscodepipelinetestbucketcf",
+          "Location": {
+            "Fn::Join": [
+              "",
+              [
+                "codepipeline-",
+                {
+                  "Ref": "ProjectName"
+                },
+                "-artifactbucket"
+              ]
+            ]
+          },
           "Type": "S3"
         },
         "RoleArn": "arn:aws:iam::835483671006:role/AWS-CodePipeline-Service",

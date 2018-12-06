@@ -162,7 +162,7 @@ def greetUser(event):
         greeting = greeting + " " + name
 
     message = "{}! I am the SimonSays bot. I can help you with the process " \
-    "of creating AWS projects and deploying them. Create a project " \
+    "of creating AWS projects, and deploying them. Create a project, " \
     "or ask me for help for more information!".format(greeting)
 
     return buildLexResponse(0, message, {}, event)
