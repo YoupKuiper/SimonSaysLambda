@@ -12,6 +12,9 @@ codecommitClient = boto3.client('codecommit')
 
 
 def lambda_handler(event, context):
+    if event["RequestType"] == "Delete":
+        return cfnresponse.SUCCESS
+
     result = cfnresponse.FAILED
 
     #Download zip to lambda
