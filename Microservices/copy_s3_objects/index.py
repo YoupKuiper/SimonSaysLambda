@@ -26,7 +26,7 @@ def handler(event, context):
       result = copy_objects(source_bucket, source_prefix, bucket, prefix, APIUrl)
     elif event['RequestType'] == 'Delete':
       print('deleting')
-      result = lambdaClient.invoke(FunctionName='S3BucketDeletionService', InvocationType='RequestResponse', Payload=json.dumps(event['ResourceProperties']))
+      result = delete_objects(bucket, prefix)
   except ClientError as e:
     logger.error('Error: %s', e)
     result = cfnresponse.FAILED
@@ -47,4 +47,11 @@ def copy_objects(source_bucket, source_prefix, bucket, prefix, APIUrl):
     if not key.endswith('/'):
       print('copy {} to {}'.format(key, dest_key))
       client.copy_object(CopySource={'Bucket': source_bucket, 'Key': key}, Bucket=bucket, Key = dest_key)
+  return cfnresponse.SUCCESS
+
+def delete_objects(bucket, prefix):
+  paginator = client.get_paginator('list_objects_v2')
+  page_iterator = paginator.paginate(Bucket=bucket, Prefix=prefix)
+  objects = [{'Key': x['Key']} for page in page_iterator for x in page['Contents']]
+  client.delete_objects(Bucket=bucket, Delete={'Objects': objects})
   return cfnresponse.SUCCESS
