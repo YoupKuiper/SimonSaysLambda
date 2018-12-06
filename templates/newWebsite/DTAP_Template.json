@@ -332,7 +332,7 @@
                         {
                           "Ref": "ProjectName"
                         },
-                        "Stack"
+                        "-demo"
                       ]
                     ]
                   }

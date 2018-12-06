@@ -12,6 +12,8 @@ projTable = dbhandler.getDB("project")
 # Map intents to the right handler functions
 def lambda_handler(event, context):
     print(event)
+    if event['sessionAttributes'] is None:
+        event['sessionAttributes'] = {}
     currentIntent = event['currentIntent']['name']
     if currentIntent == "CreateProject":
         return createProject(event)
@@ -113,8 +115,7 @@ def addResourcesToProject(event):
     resources = list(event['currentIntent']['slots'].values())
     sessionAttributes = event['sessionAttributes']
 
-    # If there is no project defined, return an error message
-    if 'projectName' not in sessionAttributes:
+    if not projectNameExists(sessionAttributes):
         message = "Please create a project before adding resources"
         return buildLexResponse(0, message, None, event)
 
@@ -156,6 +157,9 @@ def greetUser(event):
     if 'name' in event['sessionAttributes']:
         name = event['sessionAttributes']['name']
         greeting = greeting + " " + name
+    elif 'name' in event['currentIntent']['slots'] and event['currentIntent']['slots']['name'] is not None:
+        name = event['currentIntent']['slots']['name']
+        greeting = greeting + " " + name
 
     message = "{}! I am the SimonSays bot. I can help you with the process " \
     "of creating AWS projects and deploying them. Create a project " \
@@ -168,14 +172,17 @@ def greetUser(event):
 def HelpUser(event):
     helpType = event['currentIntent']['slots']['Help']
 
+
     if helpType == 'projects':
-        message = "You can create a project by saying 'create a project'."
+        message = "You can create an AWS project, consisting of multiple resources."
     elif helpType == 'resources':
-        message = "You can add resources after a project has been created by saying 'add', followed by the name of the resource you wish to add. You can also add multiple resources in a single command, try it out!"
-    elif helpType == 'deployment':
-        message = "Deploy a project after you are done adding resources to a created project by saying 'deploy project'"
+        message = "You can add resources after a project has been created. You can add them one by one or in batches!"
+    elif helpType == 'deploy':
+        message = "You can deploy a project after you're done adding resources."
+    elif helpType == 'general':
+        message = "First, create a project. Then, add some resources and finally deploy the project to the cloud"
     else:
-        message = "I'm sorry, I cannot help you with {}. I can only help you with resources, projects and deployment. Please select one.".format(
+        message = "I'm sorry, I cannot help you with {}. I can only help you with resources, projects and deployment.".format(
             helpType)
         return elicit_slot(event['sessionAttributes'], event['currentIntent']['name'], event['currentIntent']['slots'], "Help", message)
 
@@ -203,6 +210,16 @@ def elicit_slot(session_attributes, intent_name, slots, slot_to_elicit, message)
 
 
 def deployProject(event):
+    sessionAttributes = event['sessionAttributes']
+
+    if not projectNameExists(sessionAttributes):
+        message = "Please create a project before deploying"
+        return buildLexResponse(0, message, None, event)
+
+    if 'resources' not in sessionAttributes:
+        message = "Please add some resources to your project before deploying"
+        return buildLexResponse(0, message, None, event)
+
     try:
         response = lambdaClient.invoke(FunctionName='SimonSaysDeployer',
                         InvocationType='Event',
@@ -211,7 +228,15 @@ def deployProject(event):
         print(e)
 
     projectName = event['sessionAttributes']['projectName']
+
     return buildLexResponse(0, f"Deployed project {projectName}. It should be ready in a couple of minutes", {}, event)
+
+def projectNameExists(sessionAttributes):
+    # If there is no project defined, return an error message
+    if 'projectName' not in sessionAttributes:
+        return False
+    else:
+        return True
 
 
 if os.environ['DEBUG'] == "True":
