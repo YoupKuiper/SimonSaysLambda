@@ -516,21 +516,7 @@
           ]
         },
         "Runtime": "python3.6",
-        "VpcConfig": {
-          "SecurityGroupIds": [
-            {
-              "Ref": "APITesterSG"
-            }
-          ],
-          "SubnetIds": [
-            {
-              "Fn::ImportValue": {"Fn::Join": ["",[ {"Ref" : "ProjectName"}, "-publicSubnet01"]]}
-            },
-            {
-              "Fn::ImportValue": {"Fn::Join": ["",[ {"Ref" : "ProjectName"}, "-publicSubnet02"]]}
-            }
-          ]
-        }
+        "Environment: { "Variables": { "TABLE_NAME": {"Fn::Join": ["",[{"Ref": "ProjectName"}, "Table"]]} }}
       },
       "Type": "AWS::Lambda::Function"
     },
