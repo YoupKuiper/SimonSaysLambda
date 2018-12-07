@@ -517,6 +517,9 @@
           ]
         },
         "Runtime": "python3.6",
+        "Environment": {
+          "Variables": {"TABLE_NAME": {"Fn::Join": ["",[{"Ref": "ProjectName"}, "Table"]]}}
+        },
         "Timeout": "30"
       },
       "Type": "AWS::Lambda::Function"
@@ -706,4 +709,5 @@
       }
     }
   }
+}
 }
