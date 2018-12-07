@@ -455,19 +455,6 @@
       },
       "Type": "AWS::ApiGateway::Method"
     },
-    "APITesterSG": {
-      "Properties": {
-        "GroupDescription": "SG for Lambda function",
-        "SecurityGroupEgress": [
-          {
-            "CidrIp": "0.0.0.0/0",
-            "FromPort": "0",
-            "IpProtocol": "tcp",
-            "ToPort": "65535"
-          }
-        ],
-      "Type": "AWS::EC2::SecurityGroup"
-    },
     "LambdaExecutionRole": {
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -486,6 +473,21 @@
           ],
           "Version": "2012-10-17"
         },
+        "Policies": [
+          {
+            "PolicyName": "root",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "dynamodb:*",
+                  "Resource": "arn:aws:dynamodb:*"
+                }
+              ]
+            }
+          }
+        ],
         "ManagedPolicyArns": [
           "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
         ]
@@ -591,32 +593,63 @@
         }
       }
     },
-    "myDNSRecord" : {
-      "Type" : "AWS::Route53::RecordSet",
-      "Properties" : {
-         "HostedZoneName" : "mirademo.com.",
-         "Comment" : "DNS name for my instance.",
-         "Name" : {
-            "Fn::Join" : [ "", [
-               {"Ref" : "ProjectName"}, ".",
-               "mirademo", ".",
-               "com" ,"."
-            ] ]
-         },
-         "Type" : "A",
-         "AliasTarget" : {
-           "DNSName": "s3-website-eu-west-1.amazonaws.com",
-           "HostedZoneId": "Z1BKCTXD74EZPE"
-         }
+    "myDNSRecord": {
+      "Type": "AWS::Route53::RecordSet",
+      "Properties": {
+        "HostedZoneName": "mirademo.com.",
+        "Comment": "DNS name for my instance.",
+        "Name": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "ProjectName"
+              },
+              ".",
+              "mirademo",
+              ".",
+              "com",
+              "."
+            ]
+          ]
+        },
+        "Type": "A",
+        "AliasTarget": {
+          "DNSName": "s3-website-eu-west-1.amazonaws.com",
+          "HostedZoneId": "Z1BKCTXD74EZPE"
+        }
       }
     },
     "WebsiteDynamoDBTable": {
-      "Type" : "AWS::DynamoDB::Table",
-      "Properties" : {
-        "AttributeDefinitions" : [ {"AttributeName": "Key", "AttributeType": "S"} ],
-        "KeySchema" : [ {"AttributeName": "Key", "KeyType": "HASH"} ],
-        "ProvisionedThroughput" : {"ReadCapacityUnits": 5, "WriteCapacityUnits": 5},
-        "TableName" : {"Fn::Join": ["",[{"Ref": "ProjectName"}, "Table"]]}
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "Key",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "Key",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "TableName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "ProjectName"
+              },
+              "Table"
+            ]
+          ]
+        }
       }
     },
     "TableContent": {
@@ -627,8 +660,20 @@
             "Arn"
           ]
         },
-        "TableName": {"Fn::Join": ["", [{"Ref": "ProjectName"}, "Table"]]},
-        "ProjectName": {"Ref": "ProjectName"}
+        "TableName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "ProjectName"
+              },
+              "Table"
+            ]
+          ]
+        },
+        "ProjectName": {
+          "Ref": "ProjectName"
+        }
       },
       "DependsOn": [
         "WebsiteDynamoDBTable",
