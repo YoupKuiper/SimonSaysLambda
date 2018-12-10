@@ -516,7 +516,7 @@
           ]
         },
         "Runtime": "python3.6",
-        "Environment: { "Variables": { "TABLE_NAME": {"Fn::Join": ["",[{"Ref": "ProjectName"}, "Table"]]} }}
+        "Environment": { "Variables": { "TABLE_NAME": {"Fn::Join": ["",[{"Ref": "ProjectName"}, "Table"]]} }}
       },
       "Type": "AWS::Lambda::Function"
     },
