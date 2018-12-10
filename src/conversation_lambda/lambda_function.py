@@ -177,9 +177,9 @@ def HelpUser(event):
         message = "You can create an AWS project, consisting of multiple resources."
     elif helpType == 'resources':
         message = "You can add resources after a project has been created. You can add them one by one or in batches!"
-    elif helpType == 'deploy':
+    elif 'deploy' in helpType:
         message = "You can deploy a project after you're done adding resources."
-    elif helpType == 'general':
+    elif 'general' in helpType:
         message = "First, create a project. Then, add some resources and finally deploy the project to the cloud"
     else:
         message = "I'm sorry, I cannot help you with {}. I can only help you with resources, projects and deployment.".format(
