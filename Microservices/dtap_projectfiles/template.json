@@ -160,7 +160,7 @@
         "Timeout": 120,
         "Code": {
           "S3Bucket": "awscodepipelinetestbucketcf",
-          "S3Key": "CopyS3ObjectsFunction.zip"
+          "S3Key": "copy_s3_objects_function.zip"
         }
       }
     },
@@ -685,7 +685,7 @@
         "Timeout": 120,
         "Code": {
           "S3Bucket": "awscodepipelinetestbucketcf",
-          "S3Key": "websitedatabasecontentfunction.zip"
+          "S3Key": "init_website_table_content_function.zip"
         }
       }
     }
