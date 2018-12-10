@@ -6,6 +6,121 @@
     }
   },
   "Resources": {
+    "S3FullAccessRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "S3Access",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Sid": "AllowLogging",
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Sid": "S3FullAccess",
+                  "Effect": "Allow",
+                  "Action": "s3:*",
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "S3BucketDeletionFunction": {
+      "Properties": {
+        "Code": {
+          "S3Bucket": "awscodepipelinetestbucketcf",
+          "S3Key": "s3_bucket_deletion_function.zip"
+        },
+        "Description": "Function to delete the artifact bucket used for the pipeline of the project",
+        "FunctionName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "ProjectName"
+              },
+              "-PipelineS3BucketDeletionFunction"
+            ]
+          ]
+        },
+        "Handler": "lambda_function.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "S3FullAccessRole",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.6",
+        "Timeout": "30"
+      },
+      "Type": "AWS::Lambda::Function"
+    },
+    "CodePipelineBucket":{
+        "Type":"AWS::S3::Bucket",
+        "Properties":{
+            "BucketName":{
+                "Fn::Join":[
+                    "",
+                    [
+                        "codepipeline-",
+                        {
+                            "Ref":"ProjectName"
+                        },
+                        "-artifactbucket"
+                    ]
+                ]
+            }
+        }
+    },
+    "CallDeleteBucketFunction": {
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "S3BucketDeletionFunction",
+            "Arn"
+          ]
+        },
+        "Bucket": {
+          "Fn::Join":[
+              "",
+              [
+                  "codepipeline-",
+                  {
+                      "Ref":"ProjectName"
+                  },
+                  "-artifactbucket"
+              ]
+          ]
+        }
+      },
+      "Type": "Custom::S3Objects",
+      "DependsOn": "CodePipelineBucket"
+    },
     "BuildProjectRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -545,7 +660,7 @@
         "Timeout": 120,
         "Code": {
           "S3Bucket": "awscodepipelinetestbucketcf",
-          "S3Key": "initcommitfunction.zip"
+          "S3Key": "init_commit_function.zip"
         }
       }
     },
