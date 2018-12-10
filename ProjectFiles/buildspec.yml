@@ -6,7 +6,7 @@ phases:
       - echo Compiling the Python code...
   post_build:
     commands:
-      - aws cloudformation package --template-file template.json --s3-bucket awscodepipelinetestbucketcf
+      - aws cloudformation package --template-file template.json --s3-bucket tobereplaced
                                    --output-template-file outputTemplate.json
 artifacts:
   files:

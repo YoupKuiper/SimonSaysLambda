@@ -3,6 +3,7 @@ import os
 import zipfile
 import cfnresponse
 import json
+import yaml
 
 
 FILEDIR = "/tmp/files/"
@@ -60,6 +61,10 @@ def lambda_handler(event, context):
                 datajson = json.loads(data)
                 datajson["Parameters"]["ProjectName"]["Default"] = projectName
                 data = json.dumps(datajson, sort_keys=False, indent=4, separators=(',', ':'))
+            elif filename == "buildspec.yml":
+                yamltojson = yaml.load(data)
+                yamltojson['phases']['post_build']['commands'][0] = yamltojson['phases']['post_build']['commands'][0].replace("awscodepipelinetestbucketcf", "codepipeline-" + projectName + "-artifactbucket")
+                data = yaml.dump(yamltojson)
             in_file.close()
             response = codecommitClient.put_file(repositoryName=repoName, branchName='master', fileContent=data ,filePath=filename, parentCommitId=commitId)
             commitId = response['commitId']
