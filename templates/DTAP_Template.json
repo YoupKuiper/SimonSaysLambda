@@ -565,7 +565,7 @@
           ]
         },
         "BucketName": "awscodepipelinetestbucketcf",
-        "ContentZipName": "test.zip",
+        "ContentZipName": "dtap_projectfiles.zip",
         "ProjectName": {
           "Ref": "ProjectName"
         }
