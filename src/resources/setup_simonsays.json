@@ -375,7 +375,8 @@
           ]
         },
         "BucketName": "simonsaysresourcebucket",
-        "ContentZipName": "SimonSaysLexBotExport.json"
+        "ContentZipName": "SimonSaysLexBotExport.json",
+        "LexBotName": "SimonSaysLexBot"
       },
       "Type": "Custom::S3Objects"
     }
