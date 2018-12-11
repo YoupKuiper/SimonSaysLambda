@@ -227,6 +227,7 @@
                     "kms:ListAliases",
                     "lambda:GetPolicy",
                     "lambda:ListFunctions",
+                    "lambda:*",
                     "lex:*",
                     "polly:DescribeVoices",
                     "polly:SynthesizeSpeech"
@@ -346,13 +347,13 @@
       "Properties": {
         "Code": {
           "S3Bucket": "simonsaysresourcebucket",
-          "S3Key": "SimonSaysConversationFunction.zip"
+          "S3Key": "bot_importer.zip"
         },
         "FunctionName": "LexBotCreationLambdaFunction",
         "Handler": "lambda_function.lambda_handler",
         "Role": {
           "Fn::GetAtt": [
-            "SimonSaysConversationRole",
+            "LexBotCreationRole",
             "Arn"
           ]
         },
