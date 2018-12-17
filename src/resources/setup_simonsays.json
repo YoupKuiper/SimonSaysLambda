@@ -357,11 +357,12 @@
             "Arn"
           ]
         },
-        "Timeout": 30,
+        "Timeout": 60,
         "Runtime": "python3.6"
       }
     },
     "CallLexBotCreationLambdaFunction": {
+      "DependsOn": ["HelpFunctionPermission", "GreetFunctionPermission", "CreateFunctionPermission", "DeployFunctionPermission", "AddResourceFunctionPermission"],
       "Properties": {
         "ServiceToken": {
           "Fn::GetAtt": [
@@ -380,6 +381,177 @@
         "LexBotName": "SimonSaysLexBot"
       },
       "Type": "Custom::S3Objects"
+    },
+    "LexARNReturnFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "simonsaysresourcebucket",
+          "S3Key": "arn_lex_function.zip"
+        },
+        "FunctionName": "ARNLexReturner",
+        "Handler": "lambda_function.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "LexBotCreationRole",
+            "Arn"
+          ]
+        },
+        "Timeout": 30,
+        "Runtime": "python3.6"
+      }
+    },
+    "CallARNReturnFunction": {
+      "Type": "Custom::LexPermissionCaller",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LexARNReturnFunction",
+            "Arn"
+          ]
+        },
+        "FunctionArn": {
+          "Fn::GetAtt" : [
+            "LexARNReturnFunction",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "HelpFunctionPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:invokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SimonSaysConversation",
+            "Arn"
+          ]
+        },
+        "Principal": "lex.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::GetAtt": [
+                  "CallARNReturnFunction",
+                  "ARN"
+                ]
+              },
+              ":HelpFunction:*"
+            ]
+          ]
+        }
+      }
+    },
+    "GreetFunctionPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:invokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SimonSaysConversation",
+            "Arn"
+          ]
+        },
+        "Principal": "lex.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::GetAtt": [
+                  "CallARNReturnFunction",
+                  "ARN"
+                ]
+              },
+              ":GreetUser:*"
+            ]
+          ]
+        }
+      }
+    },
+    "CreateFunctionPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:invokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SimonSaysConversation",
+            "Arn"
+          ]
+        },
+        "Principal": "lex.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::GetAtt": [
+                  "CallARNReturnFunction",
+                  "ARN"
+                ]
+              },
+              ":CreateProject:*"
+            ]
+          ]
+        }
+      }
+    },
+    "AddResourceFunctionPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:invokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SimonSaysConversation",
+            "Arn"
+          ]
+        },
+        "Principal": "lex.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::GetAtt": [
+                  "CallARNReturnFunction",
+                  "ARN"
+                ]
+              },
+              ":AddResources:*"
+            ]
+          ]
+        }
+      }
+    },
+    "DeployFunctionPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:invokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SimonSaysConversation",
+            "Arn"
+          ]
+        },
+        "Principal": "lex.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::GetAtt": [
+                  "CallARNReturnFunction",
+                  "ARN"
+                ]
+              },
+              ":DeployProject:*"
+            ]
+          ]
+        }
+      }
     }
   }
 }
