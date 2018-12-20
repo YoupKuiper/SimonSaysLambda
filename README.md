@@ -6,7 +6,7 @@ To deploy the SimonSays bot on a custom system please use the following steps:
 
 2. Upload the contents of the 'simonsaysresourcebucket' folder to this bucket
 
-3. Create a stack using the provided setup_simonssays.json cloudformation template.
+3. Create a CloudFormation stack using the provided setup_simonssays.json CloudFormation template.
 
 4. Add your mobile phone number in the 'PhoneNumber' field in the parameters section (format: +31612345678)
 
