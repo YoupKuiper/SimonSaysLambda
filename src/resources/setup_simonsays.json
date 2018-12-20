@@ -178,6 +178,112 @@
         "TableName": "SimonSaysCFNTemplates"
       }
     },
+    "SimonSaysProjectsTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "ProjectName",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "ProjectName",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 123,
+          "WriteCapacityUnits": 123
+        },
+        "TableName": "SimonSaysProjects"
+      }
+    },
+    "DatabaseInitializationRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/",
+        "RoleName": "DatabaseInitializationRole",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "LambdaBasic",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                      "logs:CreateLogGroup",
+                      "logs:CreateLogStream",
+                      "logs:PutLogEvents"
+                  ],
+                  "Resource": "arn:aws:logs:*:*:*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                      "lambda:InvokeFunction"
+                  ],
+                  "Resource": "arn:aws:lambda:*:*:*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                      "dynamodb:*"
+                  ],
+                  "Resource": "arn:aws:dynamodb:*:*:*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "CallInitializeDatabaseFunction": {
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "InitializeTemplateDatabaseFunction",
+            "Arn"
+          ]
+        },
+        "TableName": {"Ref": "SimonSaysCFNTemplatesTable"}
+      },
+      "Type": "Custom::S3Objects",
+      "DependsOn": "SimonSaysCFNTemplatesTable"
+    },
+    "InitializeTemplateDatabaseFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "simonsaysresourcebucket",
+          "S3Key": "InitializeTemplateDB.zip"
+        },
+        "FunctionName": "InitializeTemplateDatabaseFunction",
+        "Handler": "lambda_function.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "DatabaseInitializationRole",
+            "Arn"
+          ]
+        },
+        "Timeout": 60,
+        "Runtime": "python3.6"
+      }
+    },
     "LexBotCreationRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
