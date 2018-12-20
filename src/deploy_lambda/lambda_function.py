@@ -12,15 +12,6 @@ def lambda_handler(event, context):
     resources = event['resources'].split(',')
     projectName = event['projectName']
 
-    if 'vpc' in resources:
-        t.addResource('vpc')
-        t.addMappings('vpc')
-        t.addParameters('vpc')
-        t.addOutputs('vpc')
-        resources.remove('vpc')
-        createStackFromTemplateBody(projectName + "-VPC", projectName, t.getTemplate())
-        t.clear()
-
     for resource in resources:
         t.addResource(resource)
         t.addMappings(resource)

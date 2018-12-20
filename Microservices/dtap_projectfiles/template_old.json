@@ -190,13 +190,9 @@
                   [
                     "\"https://",
                     {
-                      "Ref": "APIGateway"
+                      "Ref": "ProjectName"
                     },
-                    ".execute-api.",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    ".amazonaws.com/LATEST\""
+                    "-api.mirademo.com\""
                   ]
                 ]
               },
