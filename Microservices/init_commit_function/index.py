@@ -13,9 +13,8 @@ codecommitClient = boto3.client('codecommit')
 
 
 def lambda_handler(event, context):
-    if event['RequestType'] == 'Delete':
+    if event['RequestType'] == 'Delete' or event['RequestType'] == 'Update':
         result = cfnresponse.SUCCESS
-        print("Deleting")
         return cfnresponse.send(event, context, result, {})
 
     result = cfnresponse.FAILED
