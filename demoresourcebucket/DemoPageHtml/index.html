@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html><head>
+    <title>Hello World From Lambda</title>
+    <meta charset="UTF-8">
+  </head>
+
+  <body class="vsc-initialized">
+    <h1>Hello World!</h1>
+    <h1 id='projectname'></h1>
+
+  <script src="js/config.js"></script>
+
+  <script>
+  var request = new XMLHttpRequest();
+
+  console.log(_config.api.invokeUrl);
+  request.open('GET', _config.api.invokeUrl, true);
+  request.onload = function () {
+
+    // Begin accessing JSON data here
+    var data = JSON.parse(this.response);
+    document.writeln("<h1>Hello World from Lambda!</h1></br>")
+
+    if (request.status >= 200 && request.status < 400) {
+      console.log(data);
+      for (var i = 0; i < data.length; i++) {
+        document.writeln("<h2>" + data[i].Key + "</h2>" + "</br>")
+      }
+
+    } else {
+      console.log('error');
+    }
+  }
+
+  request.send();
+
+  </script>
+
+</body></html>

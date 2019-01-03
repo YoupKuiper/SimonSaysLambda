@@ -2,13 +2,13 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Parameters": {
     "Bucket": {
-      "Default": "False",
+      "Default": "simonsaysresourcebucket",
       "Type": "String",
       "Description": "The bucket name that the bot uses"
     },
     "PhoneNumber": {
       "Type": "String",
-      "Default": "+31683965742"
+      "Default": "+31612345678"
     }
   },
   "Description": "Stack for the deployment of the SimonSays project",

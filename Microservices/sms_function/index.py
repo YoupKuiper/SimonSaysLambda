@@ -21,7 +21,7 @@ def handler(event, context):
             return cfnresponse.send(event, context, result, {})
 
         try:
-            sendSMS(AccessKey, SecretKey, phoneNumber, userpoolid, "Test")
+            sendSMS(AccessKey, SecretKey, phoneNumber, userpoolid, "CognitoID")
         except Exception as E:
             print(E)
             return cfnresponse.send(event, context, result, {})
@@ -38,7 +38,7 @@ def sendSMS(AccessKey, SecretKey, number, message, sender):
         aws_secret_access_key=SecretKey,
     )
 
-    time.sleep(5)
+    time.sleep(10)
 
     response = client.publish(
         PhoneNumber=number,

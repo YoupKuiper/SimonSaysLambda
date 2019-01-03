@@ -3,6 +3,11 @@
     "ProjectName": {
       "Type": "String",
       "Default": "TestProject"
+    },
+    "CodeBucket": {
+      "Type": "String",
+      "Default": "simonsaysresourcebucket",
+      "Description": "S3 bucket containing the code deployed by this template"
     }
   },
   "Resources": {
@@ -53,7 +58,7 @@
     "S3BucketDeletionFunction": {
       "Properties": {
         "Code": {
-          "S3Bucket": "awscodepipelinetestbucketcf",
+          "S3Bucket": {"Ref": "CodeBucket"},
           "S3Key": "s3_bucket_deletion_function.zip"
         },
         "Description": "Function to delete the artifact bucket used for the pipeline of the project",
@@ -642,7 +647,7 @@
         },
         "Timeout": 120,
         "Code": {
-          "S3Bucket": "awscodepipelinetestbucketcf",
+          "S3Bucket": {"Ref": "CodeBucket"},
           "S3Key": "init_commit_function.zip"
         }
       }
@@ -662,7 +667,7 @@
             "Name"
           ]
         },
-        "BucketName": "awscodepipelinetestbucketcf",
+        "BucketName": {"Ref": "CodeBucket"},
         "ContentZipName": "dtap_projectfiles.zip",
         "ProjectName": {
           "Ref": "ProjectName"
