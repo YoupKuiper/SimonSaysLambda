@@ -2,9 +2,9 @@
 
 To deploy the SimonSays bot on a custom system please use the following steps:
 
-1. Create an S3 bucket named "simonsaysresourcebucket", make sure to select a region that has lex services available including: Oregon, Northern Virginia and Ireland.
+1. Create two S3 buckets, name one "simonsaysresourcebucket" and the other one "demoresourcebucket", make sure to select a region that has lex services available including: Oregon, Northern Virginia and Ireland.
 
-2. Upload the contents of the "simonsaysresourcebucket" folder to this bucket
+2. Upload the contents of the "simonsaysresourcebucket" folder in this repository to the "simonsaysresourcebucket" and do the same for the "demoresourcebucket".
 
 3. Create a CloudFormation stack using the provided setup_simonssays.json CloudFormation template. Create this stack in the same region as the bucket you created in step 1.
 
