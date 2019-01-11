@@ -528,44 +528,6 @@
       },
       "Type": "AWS::Lambda::Permission"
     },
-    "myDNSRecord": {
-      "Type": "AWS::Route53::RecordSet",
-      "Properties": {
-        "HostedZoneName": "mirademo.com.",
-        "Comment": "DNS name for my instance.",
-        "Name": {
-          "Fn::Join": [
-            "",
-            [
-              {
-                "Ref": "ProjectName"
-              },
-              ".",
-              "mirademo",
-              ".",
-              "com",
-              "."
-            ]
-          ]
-        },
-        "Type": "A",
-        "AliasTarget": {
-          "DNSName": {
-            "Fn::Join": [
-              "",
-              [
-                "s3-website-",
-                {
-                  "Ref": "Region"
-                },
-                ".amazonaws.com"
-              ]
-            ]
-          },
-          "HostedZoneId": "Z1BKCTXD74EZPE"
-        }
-      }
-    },
     "WebsiteDynamoDBTable": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
