@@ -922,7 +922,12 @@
     "SMSFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
-        "Role": "arn:aws:iam::835483671006:role/SimonSaysLambdaRole",
+        "Role": {
+          "Fn::GetAtt": [
+            "SMSSenderRole",
+            "Arn"
+          ]
+        },
         "FunctionName": "SMSFunction",
         "Description": "Sends an sms containing an CognitoPoolId",
         "Handler": "index.handler",
@@ -932,6 +937,51 @@
           "S3Bucket": { "Ref" : "Bucket"},
           "S3Key": "sms_function.zip"
         }
+      }
+    },
+    "SMSSenderRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/",
+        "RoleName": "SMSSenderRole",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "SNS",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                      "logs:CreateLogGroup",
+                      "logs:CreateLogStream",
+                      "logs:PutLogEvents"
+                  ],
+                  "Resource": "arn:aws:logs:*:*:*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                      "sns:*"
+                  ],
+                  "Resource": "arn:aws:sns:*:*:*"
+                }
+              ]
+            }
+          }
+        ]
       }
     }
   },
