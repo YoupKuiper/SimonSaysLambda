@@ -58,9 +58,7 @@
     "S3BucketDeletionFunction": {
       "Properties": {
         "Code": {
-          "S3Bucket": {
-            "Ref": {"Fn::ImportValue": "demoresourcebucket"}
-          },
+          "S3Bucket": {"Fn::ImportValue": "demoresourcebucket"},
           "S3Key": "s3_bucket_deletion_function.zip"
         },
         "Description": "Function to delete the artifact bucket used for the pipeline of the project",
@@ -659,9 +657,7 @@
         },
         "Timeout": 120,
         "Code": {
-          "S3Bucket": {
-            "Ref": {"Fn::ImportValue": "demoresourcebucket"}
-          },
+          "S3Bucket": {"Fn::ImportValue": "demoresourcebucket"},
           "S3Key": "init_commit_function.zip"
         }
       }
@@ -681,9 +677,7 @@
             "Name"
           ]
         },
-        "BucketName": {
-          "Ref": {"Fn::ImportValue": "demoresourcebucket"}
-        },
+        "BucketName": {"Fn::ImportValue": "demoresourcebucket"},
         "ContentZipName": "dtap_projectfiles.zip",
         "ProjectName": {
           "Ref": "ProjectName"

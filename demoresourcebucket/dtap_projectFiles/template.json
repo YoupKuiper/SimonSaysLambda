@@ -172,9 +172,7 @@
             "Arn"
           ]
         },
-        "SourceBucket": {
-          "Ref": {"Fn::ImportValue": "demoresourcebucket"}
-        },
+        "SourceBucket": {"Fn::ImportValue": "demoresourcebucket"},
         "SourcePrefix": "DemoPageHtml",
         "Bucket": {
           "Ref": "WebsiteBucket"
