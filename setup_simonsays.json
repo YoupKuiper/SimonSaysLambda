@@ -983,12 +983,20 @@
           }
         ]
       }
+    },
+    "DemoBucket": {
+      "Type": "AWS::S3::Bucket"
     }
   },
   "Outputs": {
     "IdentityPoolId" : {
       "Description" : "Identity Pool ID to get access to lex bot",
       "Value" : {"Ref": "SimonSaysCognitoIdentityPool"}
+    },
+    "DemoResourceBucket" : {
+      "Description" : "Bucket that has been created for the resources for the demo",
+      "Value" : {"Ref": "DemoBucket"},
+      "Export": {"Name" : "demoresourcebucket"}
     }
   }
 }

@@ -2,7 +2,7 @@
 
 To deploy the SimonSays bot on a custom system please use the following steps:
 
-1. Create two S3 buckets, name one "simonsaysresourcebucket" and the other one "demoresourcebucket", make sure to select a region that has lex services available including: Oregon, Northern Virginia and Ireland.
+1. Create two S3 buckets, name one "simonsaysresourcebucket" and the other one "demoresourcebucket", make sure to select a region that has lex services available including: Oregon, Northern Virginia and Ireland. If the bucket name already exists, add something to the name to make it unique.
 
 2. Upload the **contents** of the "simonsaysresourcebucket" folder in this repository to the "simonsaysresourcebucket" and upload the **contents** of the "demoresourcebucket" to the "demoresourcebucket".
 
@@ -10,12 +10,14 @@ To deploy the SimonSays bot on a custom system please use the following steps:
 
 4. Add your mobile phone number in the 'PhoneNumber' field in the parameters section (format: +31612345678)
 
-5. Launch the stack, the stack name doesn't matter but check the box for: 'I acknowledge that AWS CloudFormation might create IAM resources with custom names.'
+5. Put the name of the "simonsaysresourcebucket" you created in the Bucket field.
 
-6. You will receive an sms on the provided phone number. Open the SimonSays iOS/Android app, go to settings and copy paste the content of the received sms into the 'Identity Pool Id' field.
+6. Launch the stack, the stack name doesn't matter but check the box for: 'I acknowledge that AWS CloudFormation might create IAM resources with custom names.'
 
-7. Select the region in which you deployed the Lex bot for the 'region' field and (optionally) put your name into the 'name' field
+7. You will receive an sms on the provided phone number (if the 1$ sms limit hasn't been reached yet). Open the SimonSays iOS/Android app, go to settings and copy paste the content of the received sms into the 'Identity Pool Id' field.
 
-8. In the AWS console, go to Lex and click on the bot named 'SimonSays'. Select 'Build' (in the top right corner).
+8. Select the region in which you deployed the Lex bot for the 'region' field and (optionally) put your name into the 'name' field
 
-9. Once the build is done, you can use the iOS/Android app to talk to the SimonSays bot!
+9. In the AWS console, go to Lex and click on the bot named 'SimonSays'. Select 'Build' (in the top right corner).
+
+10. Once the build is done, you can use the iOS/Android app to talk to the SimonSays bot!
