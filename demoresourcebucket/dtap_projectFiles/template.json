@@ -114,27 +114,13 @@
                     "s3:ListBucket",
                     "s3:GetObject"
                   ],
-                  "Resource": [
-                    {
-                      "Fn::Sub": "arn:aws:s3:::${"{"Fn::ImportValue": "demoresourcebucket"}"}"
-                    },
-                    {
-                      "Fn::Sub": "arn:aws:s3:::${"{"Fn::ImportValue": "demoresourcebucket"}"}/*"
-                    }
-                  ]
+                  "Resource": "*"
                 },
                 {
                   "Sid": "DestBucketWriteAccess",
                   "Effect": "Allow",
                   "Action": "s3:*",
-                  "Resource": [
-                    {
-                      "Fn::Sub": "arn:aws:s3:::${WebsiteBucket}"
-                    },
-                    {
-                      "Fn::Sub": "arn:aws:s3:::${WebsiteBucket}/*"
-                    }
-                  ]
+                  "Resource": "*"
                 }
               ]
             }
