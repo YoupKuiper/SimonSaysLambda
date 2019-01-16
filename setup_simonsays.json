@@ -986,6 +986,83 @@
     },
     "DemoBucket": {
       "Type": "AWS::S3::Bucket"
+    },
+    "S3FullAccessRoleSimonSays": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "S3FullAccessPolicy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Sid": "AllowLogging",
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Sid": "S3FullAccessPolicy",
+                  "Effect": "Allow",
+                  "Action": "s3:*",
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "S3BucketDeletionFunctionSimonSays": {
+      "Properties": {
+        "Code": {
+          "S3Bucket": { "Ref" : "Bucket"},
+          "S3Key": "s3_bucket_deletion_function.zip"
+        },
+        "Description": "Function to delete the bucket used for the demoproject",
+        "FunctionName": "simonsaysdemobucketdeletionfunction",
+        "Handler": "lambda_function.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "S3FullAccessRoleSimonSays",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.6",
+        "Timeout": "30"
+      },
+      "Type": "AWS::Lambda::Function"
+    },
+    "CallDeleteBucketFunction": {
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "S3BucketDeletionFunctionSimonSays",
+            "Arn"
+          ]
+        },
+        "Bucket": {"Ref": "DemoBucket"}
+      },
+      "Type": "Custom::S3Objects",
+      "DependsOn": "DemoBucket"
     }
   },
   "Outputs": {
