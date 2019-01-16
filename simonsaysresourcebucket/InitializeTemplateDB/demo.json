@@ -6,7 +6,7 @@
     },
     "CodeBucket": {
       "Type": "String",
-      "Default": "demoresourcebucket",
+      "Default": {"Fn::ImportValue": "demoresourcebucket"},
       "Description": "S3 bucket containing the code deployed by this template"
     }
   },
